@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah run</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah run</h2>
+                    <p> Memulai mengeksekusi sebuah program baru di bawah GDB.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>run</b><br/>
+                        <b>run</b> [<i>Argumen</i>]<br/>
+                        <b>r</b><br/>
+                        <b>r</b> [<i>Argumen</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Argumen</dt>
+                        <dd>Menentukan argumen baris perintah yang diteruskan ke program melalui parameter <b>argv</b> dan <b>argc</b>.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Pembatasan</h4>
+                    <p>Perintah <b>run</b> harus digunakan hanya jika Anda ingin mendebag instansi baru dari program. Gunakan perintah <a href="continue.htm" tppabs="http://visualgdb.com/gdbreference/commands/continue"><b>continue</b></a> sebagai gantinya dalam kasus-kasus berikut:</p>
+                    <ul>
+                        <li>Untuk melanjutkan proses setelah melakukan attach ke program dengan perintah <a href="attach.htm" tppabs="http://visualgdb.com/gdbreference/commands/attach"><b>attach</b></a></li>
+                        <li>Untuk memulai debugging dengan gdbserver</li>
+                        <li>Untuk melanjutkan dari sebuah breakpoint</li>
+                    </ul>
+                    <p>Jika Anda mengeluarkan perintah <b>run</b> setelah sebuah breakpoint tercapai, program Anda akan dimulai ulang dari awal.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Perintah berikut memulai mengeksekusi program dengan meneruskan "Hello World" sebagai argumen:</p>
+                    <pre>
+                        <code>
+(gdb) <b>b main</b>
+Breakpoint 1 at 0x8048444: file 0.cpp, line 3.
+(gdb) <b>run "Hello World"</b>
+Starting program: /home/testuser/0.elf "Hello World"
+
+Breakpoint 1, main (argc=2, argv=0xbffff774) at 0.cpp:3
+3 {
+(gdb) <b>print *argv@argc</b>
+$1 = {0xbffff894 "/home/testuser/0.elf", 0xbffff8a9 "Hello World"}
+                        </code>
+                    </pre>
+                    <p></p>
+
+                    <h4>Kesalahan Umum</h4>
+                    <p>Menggunakan perintah <b>run</b> untuk memulai debugging dengan gdbserver akan menghasilkan kesalahan. Gunakan perintah <a href="continue.htm" tppabs="http://visualgdb.com/gdbreference/commands/continue"><b>continue</b></a> sebagai gantinya:</p>
+                    <pre>
+                        <code>
+(gdb) <b>target remote :2001</b>
+Remote debugging using :2001
+Reading symbols from /lib/ld-linux.so.2...Reading symbols from /usr/lib/debug/lib/i386-linux-gnu/ld-2.15.so...done.
+done.
+Loaded symbols for /lib/ld-linux.so.2
+0xb7fdf1d0 in _start () from /lib/ld-linux.so.2
+(gdb) <b>run</b>
+The "remote" target does not support "run".  Try "help target" or "continue".
+(gdb) <b>b main</b>
+Breakpoint 1 at 0x8048444: file 0.cpp, line 3.
+(gdb) <b>continue</b>
+Continuing.
+
+Breakpoint 1, main (argc=1, argv=0xbffff7a4) at 0.cpp:3
+3 {
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

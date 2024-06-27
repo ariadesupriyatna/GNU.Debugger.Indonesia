@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info frame</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info frame</h2>
+                    <p>Menampilkan informasi lanjutan tentang suatu frame stack.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> frame<br/>
+                        <b>info</b> frame [<i>Nomor frame</i>]<br/>
+                        <b>info</b> frame [<i>Alamat frame</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nomor frame</dt>
+                        <dd>Menentukan nomor frame berbasis nol yang akan digunakan untuk menampilkan informasi frame. Jika tidak disertakan, perintah <b>info frame</b> akan menampilkan informasi tentang frame saat ini yang dipilih oleh perintah <a href="frame.htm" tppabs="http://visualgdb.com/gdbreference/commands/frame"><b>frame</b></a>.</dd>
+                    </dl>
+                    <p></p>
+                    <dl>
+                        <dt>Alamat frame</dt>
+                        <dd>Menentukan alamat memori dari frame yang akan ditampilkan. Alamat frame adalah alamat lokasi memori setelah kata terakhir yang dimiliki oleh frame tersebut. Contohnya, pada sistem x86, alamat frame akan menjadi nilai dari register <b>ebp</b> + 8 (untuk memperhitungkan nilai sebelumnya yang disimpan dari ebp dan alamat pengembalian yang didorong oleh instruksi panggilan yang dianggap sebagai bagian dari frame).</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Keterangan</h4>
+                    <p>Perintah <b>info frame</b> menampilkan banyak informasi tingkat rendah tentang suatu frame. Gunakan perintah <b>info args</b> dan <b>info locals</b> untuk melihat output yang lebih ringkas.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan mengilustrasikan penggunaan perintah <b>info frame</b> menggunakan fungsi rekursif di bawah ini:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+void level0()
+{
+    printf("Reached level 0\n");
+}
+
+void test(int level)
+{
+    if (level > 0)
+    {
+        int prevLevel = level - 1;
+        printf("Level %d\n", level);
+        test(prevLevel);
+    }
+    else
+    {
+        level0();
+    }
+}
+
+int main()
+{
+    test(5);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Kami akan menetapkan breakpoint pada fungsi <b>level0()</b> dan menggunakan perintah <b>info frame</b> untuk menampilkan berbagai informasi tingkat rendah tentang berbagai frame:</p>
+                    <pre>
+                        <code>
+(gdb) break level0
+Breakpoint 1 at 0x8048452: file recursion.cpp, line 5.
+(gdb) run
+Starting program: /home/testuser/recursionTest
+Level 5
+Level 4
+Level 3
+Level 2
+Level 1
+
+Breakpoint 1, level0 () at recursion.cpp:5
+5  printf("Reached level 0\n");
+(gdb) backtrace
+#0  level0 () at recursion.cpp:5
+#1  0x0804849a in test (level=0) at recursion.cpp:17
+#2  0x08048493 in test (level=1) at recursion.cpp:14
+#3  0x08048493 in test (level=2) at recursion.cpp:14
+#4  0x08048493 in test (level=3) at recursion.cpp:14
+#5  0x08048493 in test (level=4) at recursion.cpp:14
+#6  0x08048493 in test (level=5) at recursion.cpp:14
+#7  0x080484b1 in main () at recursion.cpp:22
+(gdb) select-frame 2
+(gdb) info frame
+Stack level 2, frame at 0xbffff5c0:
+ eip = 0x8048493 in test (recursion.cpp:14); saved eip 0x8048493
+ called by frame at 0xbffff5f0, caller of frame at 0xbffff590
+ source language c++.
+ Arglist at 0xbffff5b8, args: level=1
+ Locals at 0xbffff5b8, Previous frame's sp is 0xbffff5c0
+ Saved registers:
+  ebp at 0xbffff5b8, eip at 0xbffff5bc
+(gdb) info registers
+eax            0x0 0
+ecx            0x0 0
+edx            0x0 0
+ebx            0xb7fc3000 -1208209408
+esp            0xbffff590 0xbffff590
+ebp            0xbffff5b8 0xbffff5b8
+esi            0x0 0
+edi            0x0 0
+eip            0x8048493 0x8048493 <test(int)+51>
+eflags         0x282 [ SF IF ]
+cs             0x73 115
+ss             0x7b 123
+ds             0x7b 123
+es             0x7b 123
+fs             0x0 0
+gs             0x33 51
+(gdb) info frame 3
+Stack frame at 0xbffff5f0:
+ eip = 0x8048493 in test (recursion.cpp:14); saved eip 0x8048493
+ called by frame at 0xbffff620, caller of frame at 0xbffff5c0
+ source language c++.
+ Arglist at 0xbffff5e8, args: level=2
+ Locals at 0xbffff5e8, Previous frame's sp is 0xbffff5f0
+ Saved registers:
+  ebp at 0xbffff5e8, eip at 0xbffff5ec
+(gdb) info frame 0xbffff5f0
+Stack frame at 0xbffff5f0:
+ eip = 0x8048493 in test (recursion.cpp:14); saved eip 0x8048493
+ called by frame at 0xbffff620, caller of frame at 0xbffff5c0
+ source language c++.
+ Arglist at 0xbffff5e8, args: level=2
+ Locals at 0xbffff5e8, Previous frame's sp is 0xbffff5f0
+ Saved registers:
+  ebp at 0xbffff5e8, eip at 0xbffff5ec
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info args</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info args</h2>
+                    <p>Menampilkan informasi tentang argumen fungsi yang sesuai dengan frame stack saat ini.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> args<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perintah <b>info args</b> menampilkan nilai-nilai argumen fungsi dari frame saat ini. Anda dapat memilih frame menggunakan perintah <a href="frame.htm" target="_blank"><b>frame</b></a>, <a href="up.htm" target="_blank"><b>up</b></a>, dan <a href="down.htm" target="_blank"><b>down</b></a>.</p>
+                    <p>Catatan bahwa perintah <b>info args</b> tidak menampilkan informasi tentang variabel lokal. Gunakan perintah <b>info locals</b> untuk daftar variabel lokal.</p>
+                    <p>Jangan bingungkan <b>info args</b> dengan perintah <b>set args</b>. Perintah <b>set args</b> mengatur argumen baris perintah untuk program yang sedang di-debug, sedangkan <b>info args</b> menampilkan argumen untuk fungsi saat ini. Argumen yang diberikan melalui <b>set args</b> akan tersedia melalui argv di fungsi main().</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Untuk mendemonstrasikan penggunaan perintah <b>info args</b>, kita akan debug program contoh berikut:</p>
+                    <pre>
+                        <code>
+#include &lt;stdio.h&gt;
+
+void func(int arg)
+{
+    printf("func(%d)\n", arg);
+}
+
+int main(int argc, char *argv[])
+{
+    int localVar1 = 1, localVar2 = 2;
+    func(localVar1 + localVar2);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Kita akan menjalankan program, mengatur breakpoint di <b>func()</b>, dan menggunakan perintah <b>info args</b> untuk menampilkan nilai argumen:</p>
+                    <pre>
+                        <code>
+(gdb) <b>set args Hello</b>
+(gdb) <b>b func</b>
+Breakpoint 1 at 0x80483ea: file test.cpp, line 5.
+(gdb) <b>run</b>
+Starting program: /home/testuser/test Hello
+
+Breakpoint 1, func (arg=3) at test.cpp:5
+5  printf("func(%d)\n", arg);
+(gdb) <b>info args</b>
+arg = 3
+(gdb) <b>backtrace</b>
+#0  func (arg=3) at test.cpp:5
+#1  0x0804842a in main (argc=2, argv=0xbffff774) at test.cpp:11
+(gdb) <b>up</b>
+#1  0x0804842a in main (argc=2, argv=0xbffff774) at test.cpp:11
+11  func(localVar1 + localVar2);
+(gdb) <b>info args</b>
+argc = 2
+argv = 0xbffff774
+(gdb) <b>print *argv@argc</b>
+$1 = {0xbffff89d "/home/testuser/test", 0xbffff8b1 "Hello"}
+(gdb) <b></b>
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

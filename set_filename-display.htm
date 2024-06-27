@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set filename-display</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set filename-display</h2>
+                    <p>Beralih antara menampilkan nama file absolut atau relatif oleh perintah <a href="backtrace.htm" tppabs="http://visualgdb.com/gdbreference/commands/backtrace"><b>backtrace</b></a> dan <a href="frame.htm" tppabs="http://visualgdb.com/gdbreference/commands/frame"><b>frame</b></a>.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> filename-display relative<br/>
+                        <b>set</b> filename-display absolute<br/>
+                        <b>set</b> filename-display basename<br/>
+                        <b>show</b> filename-display<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt>relative</dt>
+                        <dd>GDB akan menampilkan path ke file source relatif terhadap direktori kompilasi. Ini adalah mode default.</dd>
+                        <dt>absolute</dt>
+                        <dd>GDB akan menampilkan path lengkap untuk semua file source.</dd>
+                        <dt>basename</dt>
+                        <dd>GDB akan menampilkan hanya nama file tanpa subdirektori.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>filename-display</b> adalah <b>relative</b>.</p>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Perintah ini didukung oleh GDB versi 7.6 dan versi lebih baru.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan penggunaan perintah <b>set filename-display</b> menggunakan program sederhana "Hello, World":</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+    printf("Hello, World\n");
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Kami akan mulai debugging, menunggu hingga breakpoint di <b>main()</b> tercapai dan mencoba mode berbeda dari <b>filename-display</b>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>break main</b>
+Breakpoint 1 at 0x80483dd: file test.cpp, line 5.
+(gdb) <b>run</b>
+Starting program: /home/testuser/test
+
+Breakpoint 1, main (argc=1, argv=0xbffff784) at test.cpp:5
+5  printf("Hello, World\n");
+(gdb) <b>backtrace</b>
+#0  main (argc=1, argv=0xbffff784) at test.cpp:5
+(gdb) <b>show filename-display</b>
+Filenames are displayed as "relative".
+(gdb) <b>set filename-display absolute</b>
+(gdb) <b>backtrace</b>
+#0  main (argc=1, argv=0xbffff784) at /home/testuser/test.cpp:5
+(gdb) <b>frame 0</b>
+#0  main (argc=1, argv=0xbffff784) at /home/testuser/test.cpp:5
+5  printf("Hello, World\n");
+(gdb) 
+                        </code>
+                    </pre>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

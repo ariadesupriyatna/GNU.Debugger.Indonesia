@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set follow-fork-mode</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set follow-fork-mode</h2>
+                    <p>Kontrol perilaku GDB ketika program yang sedang di-debug memanggil <b>fork()</b> atau <b>vfork()</b>.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> follow-fork-mode <b>parent</b><br/>
+                        <b>set</b> follow-fork-mode <b>child</b><br/>
+                        <b>show</b> follow-fork-mode<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>parent</b></dt>
+                        <dd>Dalam mode ini, GDB akan terus meng-debug proses induk jika <b>fork()</b> atau <b>vfork()</b> dipanggil. Ini adalah mode default.</dd>
+                        <dt><b>child</b></dt>
+                        <dd>Dalam mode ini, GDB akan beralih ke proses anak jika <b>fork()</b> atau <b>vfork()</b> dipanggil.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>follow-fork-mode</b> adalah 'parent'.</p>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Jika Anda telah mengatur <b>detach-on-fork</b> ke <b>on</b>, GDB akan meng-debug baik proses induk maupun anak. Gunakan perintah <b>info inferiors</b> untuk menampilkan detail dan perintah <b>inferior</b> untuk beralih di antara keduanya.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan mendebag program C++ berikut:</p>
+                    <pre>
+                        <code>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+
+void func(int pid, int ret)
+{
+    printf("My PID is %d, fork() returned %d\n", pid, ret);
+
+    if (ret)
+        printf("Kita berada dalam proses induk\n");
+    else
+        printf("Kita berada dalam proses anak\n");
+}
+
+int main()
+{
+    int r = fork();
+    func(getpid(), r);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Pertama, kita akan mendebag program dengan pengaturan default untuk <b>follow-fork-mode</b>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>break main</b>
+Breakpoint 1 at 0x804848f: file forktest.cpp, line 17.
+(gdb) <b>run</b>
+Starting program: /home/testuser/forktest
+
+Breakpoint 1, main () at forktest.cpp:17
+17     int r = fork();
+(gdb) <b>show follow-fork-mode</b>
+Debugger response to a program call of fork or vfork is "parent".
+(gdb) <b>break func</b>
+Breakpoint 2 at 0x804844a: file forktest.cpp, line 7.
+(gdb) <b>continue</b>
+Continuing.
+
+Breakpoint 2, func (pid=7975, ret=7980) at forktest.cpp:7
+7     printf("My PID is %d, fork() returned %d\n", pid, ret);
+(gdb)
+My PID is 7980, fork() returned 0
+Kita berada dalam proses anak
+(gdb) <b>continue</b>
+Continuing.
+My PID is 7975, fork() returned 7980
+Kita berada dalam proses induk
+[Inferior 1 (process 7975) exited normally]
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Karena GDB dikonfigurasi untuk terus meng-debug proses induk, proses anak menghasilkan teks 'Kita berada dalam proses anak' saat GDB berhenti di breakpoint pada proses induk. Ketika kami mengeluarkan perintah <a href="continue.htm" tppabs="http://visualgdb.com/gdbreference/commands/continue"><b>continue</b></a>, proses induk mencetak pesannya dan keluar.</p>
+                    <p>Sekarang kita akan melihat apa yang terjadi ketika GDB dikonfigurasi untuk beralih ke proses anak:</p>
+                    <pre>
+                        <code>
+(gdb) <b>break main</b>
+Breakpoint 1 at 0x804848f: file forktest.cpp, line 17.
+(gdb) <b>run</b>
+Starting program: /home/testuser/forktest
+
+Breakpoint 1, main () at forktest.cpp:17
+17     int r = fork();
+(gdb) <b>set follow-fork-mode child</b>
+(gdb) <b>break func</b>
+Breakpoint 2 at 0x804844a: file forktest.cpp, line 7.
+(gdb) <b>continue</b>
+Continuing.
+My PID is 8025, fork() returned 8029
+Kita berada dalam proses induk [Proses baru 8029]
+[Beralih ke proses 8029]
+
+Breakpoint 2, func (pid=8029, ret=0) at forktest.cpp:7
+7     printf("My PID is %d, fork() returned %d\n", pid, ret);
+(gdb) <b>continue</b>
+Continuing.
+My PID is 8029, fork() returned 0
+Kita berada dalam proses anak
+[Inferior 2 (process 8029) exited normally]
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Sekarang GDB telah beralih ke proses anak, sementara proses induk tetap berjalan di latar belakang. Nilai <b>ret</b> dalam pesan breakpoint adalah 0, menunjukkan bahwa kita berada dalam proses anak.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

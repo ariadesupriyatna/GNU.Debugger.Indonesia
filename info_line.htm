@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info line</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info line</h2>
+                    <p>Menerjemahkan nomor baris ke alamat dan sebaliknya.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> line [<i>File</i>]:[<i>Baris</i>]<br/>
+                        <b>info</b> line [<i>Fungsi</i>]<br/>
+                        <b>info</b> line [<i>File</i>]:[<i>Fungsi</i>]<br/>
+                        <b>info</b> line *[<i>Alamat</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>File/Baris</dt>
+                        <dd>Jika digunakan, perintah <b>info line</b> akan menampilkan alamat awal dan akhir dari baris sumber yang diberikan.</dd>
+                        <dt>Fungsi</dt>
+                        <dd>Jika parameter ini digunakan, perintah <b>info line</b> akan menampilkan informasi tentang baris sumber pertama dari fungsi yang diberikan.</dd>
+                        <dt>Alamat</dt>
+                        <dd>Jika parameter ini digunakan, perintah <b>info line</b> akan menampilkan informasi tentang baris sumber yang sesuai dengan alamat yang ditentukan.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Berikut adalah beberapa contoh penggunaan perintah <b>info line</b> dengan menggunakan program C++ sederhana yang hanya berisi fungsi <b>main()</b> kosong:</p>
+                    <pre>
+                        <code>
+(gdb) start
+Temporary breakpoint 1 at 0x80483f0: file test.cpp, line 5.
+Starting program: /home/bazis/test
+
+Temporary breakpoint 1, main (argc=1, argv=0xbffff064) at test.cpp:5
+5               return 0;
+(gdb) info line test.cpp:5
+Baris 5 dari "test.cpp" dimulai dari alamat 0x80483f0 <main(int, char**)+3> dan berakhir di 0x80483f5 <main(int, char**)+8>.
+(gdb) info line *0x80483f0
+Baris 5 dari "test.cpp" dimulai dari alamat 0x80483f0 <main(int, char**)+3> dan berakhir di 0x80483f5 <main(int, char**)+8>.
+(gdb) info line *0x80483f6
+Baris 6 dari "test.cpp" dimulai dari alamat 0x80483f5 <main(int, char**)+8> dan berakhir di 0x80483f7.
+(gdb) info line main
+Baris 4 dari "test.cpp" dimulai dari alamat 0x80483ed <main(int, char**)> dan berakhir di 0x80483f0 <main(int, char**)+3>.
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

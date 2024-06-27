@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info breakpoints</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info breakpoints</h2>
+                    <p>Menampilkan informasi tentang breakpoint.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> <b>breakpoints</b><br />
+                        <b>info</b> <b>breakpoints</b> [<i>Number</i>]<br />
+                        <b>info</b> <b>breakpoints</b> [<i>Number1</i>] [<i>Number2</i>] ... [<i>NumberN</i>]<br />
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Number</dt>
+                        <dd>Ketika perintah <b>info breakpoints</b> dipanggil tanpa argumen, itu menampilkan informasi tentang semua breakpoint. Ketika satu atau lebih nomor ditentukan, hanya breakpoint yang cocok dengan nomor yang ditentukan akan ditampilkan.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Kolom</h4>
+                    <dl>
+                        <dt>Num</dt>
+                        <dd>Menunjukkan nomor breakpoint yang dapat digunakan sebagai argumen untuk perintah <a href="enable.htm" target="_blank"><b>enable</b></a>, <a href="disable.htm" target="_blank"><b>disable</b></a>, <a href="delete.htm" target="_blank"><b>delete</b></a> dan perintah <b>condition</b>.</dd>
+                        <dt>Type</dt>
+                        <dd>Menunjukkan jenis breakpoint. <b>Breakpoint</b> mengindikasikan breakpoint kode. <b>Watchpoint</b> mengindikasikan breakpoint data.</dd>
+                        <dt>Disp</dt>
+                        <dd>Menunjukkan apa yang terjadi pada breakpoint saat terkena. <b>Keep</b> berarti breakpoint tidak akan dihapus. <b>Del</b> berarti breakpoint akan dihapus setelah hit pertama. <b>Dis</b> berarti breakpoint akan dinonaktifkan setelah hit pertama.</dd>
+                        <dt>Address</dt>
+                        <dd>Menunjukkan alamat di mana breakpoint diatur. Nilai <b>&lt;PENDING&gt;</b> berarti GDB tidak dapat menemukan kode yang sesuai dengan lokasi yang ditentukan dan karena itu tidak dapat mengatur breakpoint segera. GDB mencoba menyelesaikan breakpoint tertunda setiap kali memuat simbol-simbol baru (yang memberikan petunjuk tentang apa yang alamatnya bisa menjadi), misalnya ketika pustaka bersama baru dimuat.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini kita akan mengatur beberapa breakpoint dalam berbagai mode dan menunjukkan bagaimana perintah <b>info breakpoints</b> menampilkan berbagai informasi tentang mereka.</p>
+                    <pre>
+                        <code>
+(gdb) <b>break main</b>
+Breakpoint 1 at 0x80483ed: file test.cpp, line 5.
+(gdb) <b>break 6</b>
+Breakpoint 2 at 0x80483f7: file test.cpp, line 6.
+(gdb) <b>tbreak 7</b>
+Temporary breakpoint 3 at 0x804841c: file test.cpp, line 7.
+(gdb) <b>info breakpoints</b>
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080483ed in main() at test.cpp:5
+2       breakpoint     keep y   0x080483f7 in main() at test.cpp:6
+3       breakpoint     del  y   0x0804841c in main() at test.cpp:7
+(gdb) <b>run</b>
+Starting program: /home/testuser/test
+Breakpoint 1, main () at test.cpp:5
+5     for (int i = 0; i &lt; 5; i++)
+(gdb) <b>info breakpoints</b>
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080483ed in main() at test.cpp:5
+ breakpoint already hit 1 time
+2       breakpoint     keep y   0x080483f7 in main() at test.cpp:6
+3       breakpoint     del  y   0x0804841c in main() at test.cpp:7
+(gdb) <b>continue</b>
+Continuing.
+Breakpoint 2, main () at test.cpp:6
+6         printf("%di);
+(gdb) <b>continue</b>
+Continuing.
+0
+Breakpoint 2, main () at test.cpp:6
+6         printf("%di);
+(gdb) <b>info breakpoints</b>
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080483ed in main() at test.cpp:5
+ breakpoint already hit 1 time
+2       breakpoint     keep y   0x080483f7 in main() at test.cpp:6
+ breakpoint already hit 2 times
+3       breakpoint     del  y   0x0804841c in main() at test.cpp:7
+(gdb) <b>disable 2</b>
+(gdb) <b>info breakpoints</b>
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080483ed in main() at test.cpp:5
+ breakpoint already hit 1 time
+2       breakpoint     keep n   0x080483f7 in main() at test.cpp:6
+ breakpoint already hit 2 times
+3       breakpoint     del  y   0x0804841c in main() at test.cpp:7
+(gdb) <b>continue</b>
+Continuing.
+1
+2
+3
+4
+Temporary breakpoint 3, main () at test.cpp:7
+7     return 0;
+(gdb) <b>info breakpoints</b>
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x080483ed in main() at test.cpp:5
+ breakpoint already hit 1 time
+2       breakpoint     keep n   0x080483f7 in main() at test.cpp:6
+ breakpoint already hit 2 times
+(gdb) <b>continue</b>
+Continuing.
+[Inferior 1 (process 26331) exited normally]
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

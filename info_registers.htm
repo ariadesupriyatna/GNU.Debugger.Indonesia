@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info registers</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info registers</h2>
+                    <p>Menampilkan isi dari register prosesor tipe umum.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> registers<br/>
+                        <b>info</b> registers [<i>Nama register</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nama register</dt>
+                        <dd>Jika spesifik, perintah <b>info registers</b> akan menampilkan isi dari register tertentu. Jika tidak, perintah akan menampilkan isi dari semua register CPU tipe umum.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perintah <b>info registers</b> tidak menampilkan isi dari register vektor dan FPU. Gunakan perintah <b>info all-registers</b> dan <b>info vector</b> untuk melihat mereka.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Berikut adalah contoh keluaran dasar dari perintah <b>info registers</b>:</p>
+                    <pre>
+                        <code>
+(gdb) start
+Temporary breakpoint 1 at 0x80483f0: file test.cpp, line 5.
+Starting program: /home/bazis/test
+
+Temporary breakpoint 1, main (argc=1, argv=0xbffff064) at test.cpp:5
+5               return 0;
+(gdb) info registers 
+eax            0x1      1
+ecx            0xbffff064       -1073745820
+edx            0x80483ed        134513645
+ebx            0xb7fbe000       -1208229888
+esp            0xbfffefc8       0xbfffefc8
+ebp            0xbfffefc8       0xbfffefc8
+esi            0x0      0
+edi            0x0      0
+eip            0x80483f0        0x80483f0 <main(int, char**)+3>
+eflags         0x246    [ PF ZF IF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) info registers eax
+eax            0x1      1
+(gdb) info registers cx
+No registers found.
+                        </code>
+                    </pre>
+
+                    <h4>Error Umum</h4>
+                    <p>Jika Anda menjalankan perintah <b>info registers</b> tanpa memulai program, Anda akan mendapatkan pesan <b>The program has no registers now</b>:</p>
+                    <pre>
+                        <code>
+(gdb) info registers
+The program has no registers now.
+                        </code>
+                    </pre>
+                    <p>Untuk mengatasi ini, jalankan program Anda menggunakan perintah <a href="run.htm">run</a> atau <a href="start.htm">start</a>, atau lampirkan ke program yang sedang berjalan menggunakan perintah <a href="attach.htm">attach</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

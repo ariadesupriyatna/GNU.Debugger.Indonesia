@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - info vtbl command</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah info vtbl</h2>
+<p> Menampilkan informasi tentang tabel metode virtual (vtable) dari sebuah objek</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>info</b> vtbl [<i>Ekspresi</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Ekspresi</dt>
+<dd>Menyebutkan sebuah ekspresi yang akan dievaluasi untuk mendapatkan pointer ke objek yang vtable-nya akan ditampilkan.</dd>
+</dl>
+<p></p>
+<h4>Catatan</h4>
+<p>Vtable berisi daftar pointer ke metode-metode virtual yang didefinisikan dalam kelas objek tersebut. Alamat vtable juga dapat digunakan untuk mengidentifikasi tipe aktual objek menggunakan perintah <b>info symbol</b>.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Kami akan menunjukkan penggunaan perintah <b>info vtbl</b> menggunakan program C++ yang terdiri dari 2 kelas:</p>
+<pre><div class="code">
+<span class="keyword">class</span>&nbsp;BaseClass     
+{     
+<span class="keyword">public</span>:     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">virtual</span>&nbsp;<span class="keyword">void</span>&nbsp;Test()     
+&nbsp;&nbsp;&nbsp;&nbsp;{     
+&nbsp;&nbsp;&nbsp;&nbsp;}     
+};     
+     
+<span class="keyword">class</span>&nbsp;ChildClass&nbsp;:&nbsp;<span class="keyword">public</span>&nbsp;BaseClass     
+{     
+<span class="keyword">public</span>:     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">virtual</span>&nbsp;<span class="keyword">void</span>&nbsp;Test()     
+&nbsp;&nbsp;&nbsp;&nbsp;{     
+&nbsp;&nbsp;&nbsp;&nbsp;}     
+};     
+     
+<span class="keyword">typedef</span>&nbsp;<span class="keyword">int</span>&nbsp;UnusedType,&nbsp;UsedType;     
+     
+<span class="keyword">int</span>&nbsp;main(<span class="keyword">int</span>&nbsp;argc,&nbsp;<span class="keyword">char</span>&nbsp;**argv)     
+{     
+&nbsp;&nbsp;&nbsp;&nbsp;BaseClass&nbsp;*pObject&nbsp;=&nbsp;<span class="keyword">new</span>&nbsp;ChildClass();     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">asm</span>(<span class="string">"int3"</span>);     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">delete</span>&nbsp;pObject;     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;0;     
+}     
+</div></pre>
+<p>Program membuat sebuah instance dari <b>ChildClass</b> dan menyimpan alamatnya dalam pointer <b>BaseClass</b>. Sekarang kita akan menggunakan perintah <b>info vtbl</b> untuk menampilkan vtable dan menunjukkan bahwa objek yang ditunjuk oleh pointer <b>BaseClass</b> sebenarnya adalah sebuah instance dari <b>ChildClass:</b></p>
+<pre><div class="code">
+(gdb) <b>run</b>     
+Starting program: /home/bazis/test      
+     
+Program received signal SIGTRAP, Trace/breakpoint trap.     
+main (argc=1, argv=0xbffff064) at test.cpp:23     
+23              delete pObject;     
+(gdb) <b>print pObject</b>     
+$1 = (BaseClass *) 0x804b008     
+(gdb) <b>info vtbl pObject</b>     
+vtable for 'BaseClass' @ 0x80486c8 (subobject @ 0x804b008):     
+[0]: 0x80485f4 &lt;ChildClass::Test()&gt;     
+(gdb) <b>info symbol 0x80486c8</b>     
+vtable for ChildClass + 8 in section .rodata of /home/bazis/test     
+</div></pre>
+<p></p>
+</div></div></div></div>
+</body>
+
+</html>

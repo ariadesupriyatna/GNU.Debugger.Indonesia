@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set multiple-symbols</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set multiple-symbols</h2>
+                    <p>Mengontrol bagaimana GDB menangani beberapa breakpoint.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> multiple-symbols all<br/>
+                        <b>set</b> multiple-symbols ask<br/>
+                        <b>set</b> multiple-symbols cancel<br/>
+                        <b>show</b> multiple-symbols<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt>all</dt>
+                        <dd>Ketika ekspresi yang ditentukan untuk perintah <a href="break.htm">break</a> menghasilkan lebih dari satu lokasi kode, GDB akan membuat breakpoint untuk semua lokasi yang terdeteksi.</dd>
+                        <dt>ask</dt>
+                        <dd>Ketika ekspresi yang ditentukan untuk perintah <a href="break.htm">break</a> menghasilkan lebih dari satu lokasi kode, GDB akan menampilkan daftar lokasi yang terdeteksi dan memungkinkan pengguna memilih lokasi mana yang akan diatur breakpoint.</dd>
+                        <dt>cancel</dt>
+                        <dd>Ketika ekspresi yang ditentukan untuk perintah <a href="break.htm">break</a> menghasilkan lebih dari satu lokasi kode, GDB akan membatalkan pembuatan breakpoint.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>multiple-symbols</b> adalah 'all'.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan penggunaan perintah <b>set multiple-symbols</b> menggunakan program C++ sederhana yang berisi 2 overload dari fungsi <b>test</b>. Menetapkan breakpoint pada <b>test</b> akan menghasilkan dua fungsi:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+void test(int)
+{
+    printf("test(int) dipanggil\n");
+}
+
+void test(int, int)
+{
+    printf("test(int, int) dipanggil\n");
+}
+
+int main()
+{
+    test(1);
+    test(1, 2);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Berikut hasil dari menjalankan perintah <a href="break.htm">break</a> pada fungsi <b>test</b> menggunakan berbagai mode <b>multiple-symbols</b>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>show multiple-symbols </b>
+Bagaimana debugger menangani ambigu dalam ekspresi adalah "all".
+(gdb) <b>break test</b>
+Breakpoint 1 at 0x80483da: test. (2 lokasi)
+(gdb) <b>info breakpoints </b>
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   &lt;MULTIPLE&gt;
+1.1                         y     0x080483da in test(int) di test.cpp:5
+1.2                         y     0x080483ee in test(int, int) di test.cpp:10
+(gdb) <b>delete</b>
+Hapus semua breakpoint? (y atau n) y
+(gdb) <b>set multiple-symbols ask</b>
+(gdb) <b>break test</b>
+[0] cancel
+[1] all
+[2] test.cpp:test(int)
+[3] test.cpp:test(int, int)
+&gt; 2 3
+Breakpoint 2 at 0x80483da: file test.cpp, baris 5.
+Breakpoint 3 at 0x80483ee: file test.cpp, baris 10.
+Peringatan: Beberapa breakpoint telah diatur.
+Gunakan perintah "delete" untuk menghapus breakpoint yang tidak diinginkan.
+(gdb) <b>info breakpoints</b>
+Num     Type           Disp Enb Address    What
+2       breakpoint     keep y   0x080483da in test(int) di test.cpp:5
+3       breakpoint     keep y   0x080483ee in test(int, int) di test.cpp:10
+(gdb) <b>delete</b>
+Hapus semua breakpoint? (y atau n) y
+(gdb) <b>set multiple-symbols cancel</b>
+(gdb) <b>break test</b>
+dibatalkan karena perintah ambigu
+Lihat set/show multiple-symbol.
+(gdb) <b>break test(int)</b>
+Breakpoint 4 at 0x80483da: file test.cpp, baris 5.
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

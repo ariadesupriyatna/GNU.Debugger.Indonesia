@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi GDB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            background: #444;
+            overflow: hidden;
+        }
+        nav a {
+            display: block;
+            color: #fff;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            float: left;
+        }
+        nav a:hover {
+            background: #555;
+        }
+        .container {
+            padding: 20px;
+        }
+        .content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .content h2 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            margin: 10px 0;
+        }
+        ul li a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dokumentasi GDB</h1>
+    </header>
+    <nav>
+        <a href="index.htm">Beranda</a>
+    </nav>
+    <div class="container">
+        <div class="content">
+            <h2>Daftar Materi GDB</h2>
+            <ul>
+                <li><a href="attach.htm">attach</a></li>
+                <li><a href="backtrace.htm">backtrace</a></li>
+                <li><a href="break.htm">break</a></li>
+                <li><a href="breakpoint_commands.htm">breakpoint_commands</a></li>
+                <li><a href="checkpoint-related_commands.htm">checkpoint-related_commands</a></li>
+                <li><a href="checkpoint.htm">checkpoint</a></li>
+                <li><a href="clear.htm">clear</a></li>
+                <li><a href="continue.htm">continue</a></li>
+                <li><a href="debugged_program_settings.htm">debugged_program_settings</a></li>
+                <li><a href="delete.htm">delete</a></li>
+                <li><a href="delete_checkpoint.htm">delete_checkpoint</a></li>
+                <li><a href="detach.htm">detach</a></li>
+                <li><a href="disable.htm">disable</a></li>
+                <li><a href="disassemble.htm">disassemble</a></li>
+                <li><a href="disassembly-related_commands.htm">disassembly-related_commands</a></li>
+                <li><a href="display.htm">display</a></li>
+                <li><a href="down.htm">down</a></li>
+                <li><a href="enable.htm">enable</a></li>
+                <li><a href="execution_control.htm">execution_control</a></li>
+                <li><a href="expression_evaluating_commands.htm">expression_evaluating_commands</a></li>
+                <li><a href="frame.htm">frame</a></li>
+                <li><a href="info_address.htm">info_address</a></li>
+                <li><a href="info_all-registers.htm">info_all-registers</a></li>
+                <li><a href="info_args.htm">info_args</a></li>
+                <li><a href="info_breakpoints.htm">info_breakpoints</a></li>
+                <li><a href="info_checkpoints.htm">info_checkpoints</a></li>
+                <li><a href="info_files.htm">info_files</a></li>
+                <li><a href="info_frame.htm">info_frame</a></li>
+                <li><a href="info_functions.htm">info_functions</a></li>
+                <li><a href="info_line.htm">info_line</a></li>
+                <li><a href="info_locals.htm">info_locals</a></li>
+                <li><a href="info_registers.htm">info_registers</a></li>
+                <li><a href="info_sharedlibrary.htm">info_sharedlibrary</a></li>
+                <li><a href="info_source.htm">info_source</a></li>
+                <li><a href="info_sources.htm">info_sources</a></li>
+                <li><a href="info_symbol.htm">info_symbol</a></li>
+                <li><a href="info_types.htm">info_types</a></li>
+                <li><a href="info_variables.htm">info_variables</a></li>
+                <li><a href="info_vector.htm">info_vector</a></li>
+                <li><a href="info_vtbl.htm">info_vtbl</a></li>
+                <li><a href="information_displaying_commands.htm">information_displaying_commands</a></li>
+                <li><a href="kill.htm">kill</a></li>
+                <li><a href="print.htm">print</a></li>
+                <li><a href="restart.htm">restart</a></li>
+                <li><a href="run.htm">run</a></li>
+                <li><a href="select-frame.htm">select-frame</a></li>
+                <li><a href="set_args.htm">set_args</a></li>
+                <li><a href="set_auto-solib-add.htm">set_auto-solib-add</a></li>
+                <li><a href="set_backtrace_limit.htm">set_backtrace_limit</a></li>
+                <li><a href="set_backtrace_past-entry.htm">set_backtrace_past-entry</a></li>
+                <li><a href="set_backtrace_past-main.htm">set_backtrace_past-main</a></li>
+                <li><a href="set_detach-on-fork.htm">set_detach-on-fork</a></li>
+                <li><a href="set_disable-randomization.htm">set_disable-randomization</a></li>
+                <li><a href="set_disassemble-next-line.htm">set_disassemble-next-line</a></li>
+                <li><a href="set_disassembly-flavor.htm">set_disassembly-flavor</a></li>
+                <li><a href="set_filename-display.htm">set_filename-display</a></li>
+                <li><a href="set_follow-fork-mode.htm">set_follow-fork-mode</a></li>
+                <li><a href="set_multiple-symbols.htm">set_multiple-symbols</a></li>
+                <li><a href="set_new-console.htm">set_new-console</a></li>
+                <li><a href="set_print_address.htm">set_print_address</a></li>
+                <li><a href="set_print_array-indexes.htm">set_print_array-indexes</a></li>
+                <li><a href="set_print_array.htm">set_print_array</a></li>
+                <li><a href="set_print_elements.htm">set_print_elements</a></li>
+                <li><a href="set_print_frame-arguments.htm">set_print_frame-arguments</a></li>
+                <li><a href="set_solib-search-path.htm">set_solib-search-path</a></li>
+                <li><a href="set_stop-on-solib-events.htm">set_stop-on-solib-events</a></li>
+                <li><a href="set_sysroot.htm">set_sysroot</a></li>
+                <li><a href="shared_library_commands.htm">shared_library_commands</a></li>
+                <li><a href="sharedlibrary.htm">sharedlibrary</a></li>
+                <li><a href="stack_related_commands.htm">stack_related_commands</a></li>
+                <li><a href="start.htm">start</a></li>
+                <li><a href="tty.htm">tty</a></li>
+                <li><a href="undisplay.htm">undisplay</a></li>
+                <li><a href="up.htm">up</a></li>
+                <li><a href="x.htm">x</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

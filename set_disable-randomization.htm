@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set disable-randomization</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set disable-randomization</h2>
+                    <p>Menentukan apakah GDB harus menonaktifkan randomisasi ruang alamat yang disediakan oleh kernel Linux sebelum memulai program yang sedang di-debug.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> disable-randomization <b>on</b><br/>
+                        <b>set</b> disable-randomization <b>off</b><br/>
+                        <b>show</b> disable-randomization<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>on</b></dt>
+                        <dd>Dalam mode ini, GDB akan menonaktifkan randomisasi ruang alamat untuk proses yang sedang di-debug. Alamat variabel stack tidak akan berubah di antara sesi debugging yang berbeda. Ini adalah mode default.</dd>
+                        <dt><b>off</b></dt>
+                        <dd>Dalam mode ini, GDB tidak akan mencoba untuk menonaktifkan randomisasi ruang alamat. Jika randomisasi diaktifkan oleh kernel Linux saat ini, pointer stack untuk variabel akan memiliki nilai yang berbeda di antara sesi debugging yang berbeda.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>disable-randomization</b> adalah 'on'.</p>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Perintah <b>set disable-randomization</b> hanya didukung pada Linux.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Program C++ berikut mencetak alamat dari sebuah variabel stack:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int main()
+{
+    int localVar;
+    printf("Alamat dari variabel stack: %08X\n", &localVar);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Jika kita menjalankannya di GDB dengan pengaturan default, alamatnya akan sama setiap kali:</p>
+                    <pre>
+                        <code>
+(gdb) <b>run</b>
+Starting program: /home/testuser/randtest
+Alamat dari variabel stack: BFFFF6CC
+[Inferior 1 (process 8368) exited normally]
+(gdb) <b>run</b>
+Starting program: /home/testuser/randtest
+Alamat dari variabel stack: BFFFF6CC
+[Inferior 1 (process 8371) exited normally]
+(gdb) <b>run</b>
+Starting program: /home/testuser/randtest
+Alamat dari variabel stack: BFFFF6CC
+[Inferior 1 (process 8372) exited normally]
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Jika kita <b>set disable-randomization</b> ke <b>off</b>, alamatnya akan berbeda setiap kali dijalankan:</p>
+                    <pre>
+                        <code>
+(gdb) <b>set disable-randomization off</b>
+(gdb) <b>run</b>
+Starting program: /home/testuser/randtest
+Alamat dari variabel stack: BF92FB3C
+[Inferior 1 (process 8376) exited normally]
+(gdb) <b>run</b>
+Starting program: /home/testuser/randtest
+Alamat dari variabel stack: BFE16CFC
+[Inferior 1 (process 8377) exited normally]
+(gdb) <b>run</b>
+Starting program: /home/testuser/randtest
+Alamat dari variabel stack: BF93FE5C
+[Inferior 1 (process 8378) exited normally]
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

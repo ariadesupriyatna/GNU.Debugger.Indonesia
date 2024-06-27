@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - Perintah continue</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah continue</h2>
+<p>Melanjutkan eksekusi program setelah breakpoint.</p>
+
+<h4>Syntax</h4>
+<div class="syntax">
+<b>continue</b><br/>
+<b>continue</b> [<i>Jumlah Ulang</i>]<br/>
+<b>c</b><br/>
+<b>c</b> [<i>Jumlah Ulang</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Jumlah Ulang</dt>
+<dd>Jika parameter ini ditentukan, GDB akan melanjutkan otomatis sebanyak <i>Jumlah Ulang</i> - 1 kali ketika breakpoint saat ini terkena.</dd>
+</dl>
+<p></p>
+<h4>Keterangan</h4>
+<p>Perintah <b>continue</b> juga digunakan untuk memulai debug dalam kasus-kasus berikut:</p>
+<ul>
+<li>Untuk melanjutkan proses setelah melakukan attach dengan <a href="attach.htm"><b>attach</b></a></li>
+<li>Untuk memulai debugging dengan gdbserver</li>
+</ul>
+<p></p>
+<h4>Contoh</h4>
+<p>Contoh ini mengilustrasikan penggunaan parameter <i>Jumlah Ulang</i>. Program berikut sedang di-debug:</p>
+<pre><div class="code">
+<span class="keyword">#include</span><span class="string">&nbsp;&lt;stdio.h&gt;</span>     
+     
+<span class="keyword">void</span>&nbsp;func(<span class="keyword">int</span>&nbsp;arg)     
+{     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"%d\n"</span>,&nbsp;arg);     
+}     
+     
+<span class="keyword">int</span>&nbsp;main(<span class="keyword">int</span>&nbsp;argc,&nbsp;<span class="keyword">char</span>&nbsp;*argv[])     
+{     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span>&nbsp;(<span class="keyword">int</span>&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;5;&nbsp;i++)     
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func(i);     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;0;     
+}     
+</div></pre>
+<p>Ketika perintah <b>continue</b> diberikan tanpa parameter, GDB berhenti di iterasi loop berikutnya. Ketika jumlah ulang sebesar 3 ditentukan, GDB akan melewati 2 iterasi berikutnya. Dalam kasus satu breakpoint ini setara dengan mengeluarkan perintah <b>continue</b> 3 kali.</p>
+<pre><div class="code">
+(gdb) <b>b func</b>     
+Breakpoint 1 at 0x80483ea: file 0.cpp, line 5.     
+(gdb) <b>r</b>     
+Starting program: /home/testuser/0.elf      
+     
+Breakpoint 1, func (arg=0) at 0.cpp:5     
+5     printf("Iterasi %darg);     
+(gdb) <b>c</b>     
+Continuing.     
+Iterasi 0     
+     
+Breakpoint 1, func (arg=1) at 0.cpp:5     
+5     printf("Iterasi %darg);     
+(gdb) <b>c 3</b>     
+Akan mengabaikan 2 kali lintasan breakpoint 1.  Melanjutkan.     
+Iterasi 1     
+Iterasi 2     
+Iterasi 3     
+     
+Breakpoint 1, func (arg=4) at 0.cpp:5     
+5     printf("Iterasi %darg);     
+</div></pre>
+<p></p>
+<h4>Kesalahan Umum</h4>
+<p>Menggunakan perintah <b>continue</b> sebelum program dimulai akan menghasilkan kesalahan. Jika Anda mengalaminya, gunakan perintah <a href="run.htm"><b>run</b></a> untuk memulai program tersebut:</p>
+<pre><div class="code">
+(gdb) <b>continue</b>     
+Program tidak sedang berjalan.     
+(gdb) <b>run</b>     
+Starting program: /home/testuser/0.elf      
+Iterasi 0     
+Iterasi 1     
+Iterasi 2     
+Iterasi 3     
+Iterasi 4     
+[Inferior 1 (process 31852) exited normally]     
+(gdb) <b></b>     
+</div></pre>
+<p></p>
+
+
+
+
+
+	
+
+</div></div></div></div>
+</body>
+</html>

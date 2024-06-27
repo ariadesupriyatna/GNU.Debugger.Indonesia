@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info sharedlibrary</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info sharedlibrary</h2>
+                    <p>Menampilkan informasi tentang pustaka yang dimuat, alamat mereka, dan status simbol-simbol debugging.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> <b>sharedlibrary</b><br/>
+                        <b>info</b> <b>share</b><br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perintah <b>info sharedlibrary</b> hanya berlaku ketika aplikasi yang sedang di-debug sudah dimulai.</p>
+                    <p>Jika perintah <b>info sharedlibrary</b> menunjukkan bahwa beberapa simbol untuk pustaka yang saat ini dimuat tidak dimuat, Anda dapat memuatnya secara manual menggunakan perintah <a href="sharedlibrary.htm"><b>sharedlibrary</b></a>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Contoh berikut menunjukkan keluaran contoh dari perintah <b>info sharedlibrary</b>:</p>
+                    <pre>
+                        <code>
+(gdb) info sharedlibrary 
+No shared libraries loaded at this time.
+(gdb) start
+Temporary breakpoint 1 at 0x80484ed: file main.cpp, line 7.
+Starting program: /home/testuser/libtest/testApp
+Temporary breakpoint 1, main () at main.cpp:7
+7     printf("In main()\n");
+(gdb) info sharedlibrary 
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes         /lib/ld-linux.so.2
+0xb7fd83a0  0xb7fd84c8  Yes         /home/testuser/libtest/libTest.so
+0xb7e30f10  0xb7f655cc  Yes         /lib/i386-linux-gnu/libc.so.6
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

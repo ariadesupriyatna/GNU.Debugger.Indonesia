@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah enable</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah enable</h2>
+                    <p>Mengaktifkan semua breakpoint atau breakpoint tertentu. Perintah ini juga dapat mengaktifkan breakpoint hanya untuk satu hit.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>enable</b><br/>
+                        <b>enable</b> [<i>Nomor</i>]<br/>
+                        <b>enable</b> [<i>Nomor1</i>] [<i>Nomor2</i>] ... [<i>NomorN</i>]<br/>
+                        <b>enable</b> <b>delete</b> [<i>Nomor</i>]<br/>
+                        <b>enable</b> <b>delete</b> [<i>Nomor1</i>] [<i>Nomor2</i>] ... [<i>NomorN</i>]<br/>
+                        <b>enable</b> <b>once</b> [<i>Nomor</i>]<br/>
+                        <b>enable</b> <b>once</b> [<i>Nomor1</i>] [<i>Nomor2</i>] ... [<i>NomorN</i>]<br/>
+                        <b>enable</b> <b>breakpoints</b> ...<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nomor</dt>
+                        <dd>Ketika <b>enable</b> dipanggil tanpa argumen, semua breakpoint akan diaktifkan. Ketika satu atau lebih nomor ditentukan, hanya breakpoint yang cocok dengan nomor yang ditentukan yang akan diaktifkan.</dd>
+                        <dt>delete</dt>
+                        <dd>Jika ditentukan, breakpoint yang diaktifkan akan otomatis dihapus setelah hit pertama. Perhatikan bahwa Anda tidak dapat menggunakan parameter ini tanpa menentukan satu atau lebih nomor breakpoint.</dd>
+                        <dt>once</dt>
+                        <dd>Jika ditentukan, breakpoint yang diaktifkan akan otomatis dinonaktifkan setelah hit pertama. Perhatikan bahwa Anda tidak dapat menggunakan parameter ini tanpa menentukan satu atau lebih nomor breakpoint.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Gunakan perintah <a href="disable.htm"><b>disable</b></a> untuk menonaktifkan breakpoint, perintah <a href="delete.htm"><b>delete</b></a> untuk menghapusnya, atau perintah <b>info breakpoints</b> untuk menampilkan informasi tentang breakpoint.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan menetapkan breakpoint di dalam sebuah loop dan mengatur agar breakpoint dinonaktifkan setelah hit pertama.</p>
+                    <pre><div class="code">
+                        (gdb) <b>break 6</b>
+                        Breakpoint 1 at 0x80483f7: file test.cpp, line 6.
+                        (gdb) <b>enable once 1</b>
+                        (gdb) <b>info breakpoints</b>
+                        Num     Type           Disp Enb Address    What
+                        1       breakpoint     dis  y   0x080483f7 in main() at test.cpp:6
+                        (gdb) <b>run</b>
+                        Starting program: /home/testuser/test
+                        Breakpoint 1, main () at test.cpp:6
+                        6         printf("%di);
+                        (gdb) <b>info breakpoints</b>
+                        Num     Type           Disp Enb Address    What
+                        1       breakpoint     dis  n   0x080483f7 in main() at test.cpp:6
+                         breakpoint already hit 1 time
+                        (gdb) <b>enable delete 1</b>
+                        (gdb) <b>continue</b>
+                        Continuing.
+                        0
+                        Temporary breakpoint 1, main () at test.cpp:6
+                        6         printf("%di);
+                        (gdb) <b>info breakpoints</b>
+                        No breakpoints or watchpoints.
+                        (gdb) <b>continue</b>
+                        Continuing.
+                        1
+                        2
+                        3
+                        4
+                        [Inferior 1 (process 26479) exited normally]
+                    </div></pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

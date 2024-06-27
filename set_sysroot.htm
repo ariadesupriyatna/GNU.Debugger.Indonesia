@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set sysroot</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set sysroot</h2>
+                    <p>Menentukan direktori lokal yang berisi salinan pustaka target dalam subdirektori yang sesuai. Opsi ini berguna saat debugging dengan gdbserver.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> sysroot [<i>Direktori</i>]<br/>
+                        <b>set</b> sysroot remote:/<br/>
+                        <b>set</b> sysroot remote:[<i>Direktori Remote</i>]<br/>
+                        <b>set</b> solib-absolute-prefix [<i>Direktori</i>]<br/>
+                        <b>show</b> sysroot<br/>
+                    </div>
+                    <p></p>
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Direktori</dt>
+                        <dd>Menentukan direktori lokal yang berisi pustaka target dalam subdirektori yang sesuai dengan jalur target. Misalnya, jika Anda mengatur ini ke <b>c:\sysroot</b>, GDB akan mengharapkan menemukan salinan <b>/lib/ld-linux.so</b> di <b>c:\sysroot\lib\ld-linux.so</b>.</dd>
+                        <dt>Direktori Remote</dt>
+                        <dd>Menentukan direktori di mesin remote yang berisi pustaka-pustaka tersebut. Biasanya Direktori Remote seharusnya hanya '/'.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Penggunaan Tipe</h4>
+                    <p>Perintah ini berguna saat debugging program jarak jauh menggunakan gdbserver dan pustaka-pustaka di mesin target (yang menjalankan gdbserver) tidak sesuai dengan pustaka-pustaka di mesin sumber (yang menjalankan gdb). Untuk mengatur breakpoint dan menemukan baris kode yang sesuai dengan lokasi kode yang berbeda, GDB perlu mengakses file-file pustaka yang berisi informasi simbol. Dengan menyalin pustaka-pustaka tersebut ke lokasi di bawah direktori lokal dan menentukan jalurnya melalui <b>set sysroot</b>, GDB dapat menemukannya.</p>
+                    <p></p>
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>set sysroot</b> tergantung pada toolchain Anda. Jika binary GDB Anda dikompilasi dengan argumen <b>--sysroot</b>, Anda tidak perlu menjalankan perintah <b>set sysroot</b> - sysroot akan secara otomatis diatur ke lokasi yang ditentukan selama kompilasi. Jika tidak, nilai defaultnya akan "" dan Anda mungkin perlu mengaturnya secara manual jika Anda sedang debugging proses remote.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan melakukan debugging sebuah shared library dengan gdbserver:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int func()
+{
+    printf("Di dalam func()\n");
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Kita akan menggunakan program sederhana untuk menguji library kita:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int func();
+
+int main()
+{
+    printf("Di dalam main()\n");
+    func();
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Pertama, kita membangun aplikasi dan library dan mendeploynya ke mesin lain:</p>
+                    <pre>
+                        <code>
+cd /home/testuser/libtest
+g++ -ggdb -fPIC -shared lib.cpp -o libTest.so
+g++ -ggdb main.cpp libTest.so -o testApp -Wl,--rpath='$ORIGIN'
+scp testApp libTest.so deploy_machine:/tmp
+                        </code>
+                    </pre>
+                    <p>Kedua, kita membuat direktori sysroot lokal yang akan berisi salinan pustaka sistem dari mesin target:</p>
+                    <pre>
+                        <code>
+mkdir /home/testuser/libtest/sysroot
+cd /home/testuser/libtest/sysroot
+scp -r deploy_machine:/lib lib
+                        </code>
+                    </pre>
+                    <p>Ketiga, kita memindahkan pustaka libTest.so ke direktori dalam sysroot yang sesuai dengan /tmp di mesin target (tempat kami mendeploy library kami):</p>
+                    <pre>
+                        <code>
+mkdir tmp
+mv ../libTest.so tmp
+                        </code>
+                    </pre>
+                    <p>Lalu kita jalankan gdbserver di mesin <b>deploy_machine</b>:</p>
+                    <pre>
+                        <code>
+cd /tmp
+gdbserver :2000 testApp
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Terakhir, kita jalankan GDB:</p>
+                    <pre>
+                        <code>
+cd /home/testuser/libtest
+gdb testApp
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Perhatikan bagaimana setelah kita mengeluarkan perintah <b>set sysroot</b>, GDB akan membaca semua simbol dari DLL yang disalin di dalam /home/testuser/libtest/sysroot.</p>
+                    <pre>
+                        <code>
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+Ini adalah perangkat lunak bebas: Anda dapat mengubah dan mendistribusikannya.
+TIDAK ADA JAMINAN, sejauh yang diizinkan oleh hukum. Ketik "show copying"
+dan "show warranty" untuk detailnya.
+GDB ini dikonfigurasi sebagai "i686-linux-gnu".
+Untuk instruksi pelaporan bug, silakan lihat:
+<http://bugs.launchpad.net/gdb-linaro/>
+
+Reading symbols from /home/testuser/libtest/testApp...done.
+(gdb) <b>set sysroot /home/testuser/libtest/sysroot</b>
+(gdb) <b>break main</b>
+Breakpoint 1 at 0x80484ed: file main.cpp, line 13.
+(gdb) <b>target remote deploy_host:2000</b>
+Remote debugging using deploy_host:2000
+Reading symbols from /home/testuser/libtest/sysroot/lib/ld-linux.so.2...(no debugging symbols found)...done.
+Loaded symbols for /home/testuser/libtest/sysroot/lib/ld-linux.so.2
+0x0012d0e0 in ?? () from /home/testuser/libtest/sysroot/lib/ld-linux.so.2
+(gdb) <b>continue</b>
+Continuing.
+Breakpoint 1, main () at main.cpp:13
+13   printf("Di dalam main()\n");
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0x0012c830  0x001435cf  Yes (*)     /home/testuser/libtest/sysroot/lib/ld-linux.so.2
+0x009563a0  0x009564c8  Yes         /home/testuser/libtest/sysroot/tmp/libTest.so
+0x007ecbe0  0x008f9784  Yes (*)     /home/testuser/libtest/sysroot/lib/i386-linux-gnu/libc.so.6
+(*): Shared library is missing debugging information.
+(gdb) <b>break func</b>
+Breakpoint 2 at 0x95646e: file lib.cpp, line 9.
+(gdb) <b>continue</b>
+Continuing.
+Breakpoint 2, func () at lib.cpp:9
+9   printf("Di dalam func()\n");
+(gdb) <b>continue</b>
+Continuing.
+[Inferior 1 (process 11111) exited normally]
+(gdb) <b>quit</b>
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Kita juga bisa menghindari penyalinan pustaka secara manual. Jika Anda menentukan <b>remote:/</b> sebagai sysroot, GDB akan mengunduh pustaka secara otomotis:
+                    <pre>
+    <code>
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+Ini adalah perangkat lunak bebas: Anda dapat mengubah dan mendistribusikannya.
+TIDAK ADA JAMINAN, sejauh yang diizinkan oleh hukum. Ketik "show copying"
+dan "show warranty" untuk detailnya.
+GDB ini dikonfigurasi sebagai "i686-linux-gnu".
+Untuk instruksi pelaporan bug, silakan lihat:
+<http://bugs.launchpad.net/gdb-linaro/>
+
+Reading symbols from /home/testuser/libtest/testApp...done.
+(gdb) <b>set sysroot remote:/</b>
+(gdb) <b>break main</b>
+Breakpoint 1 at 0x80484ed: file main.cpp, line 13.
+(gdb) <b>target remote deploy_host:2000</b>
+Remote debugging using deploy_host:2000
+Reading symbols from remote:/lib/ld-linux.so.2...(no debugging symbols found)...done.
+Loaded symbols for remote:/lib/ld-linux.so.2
+0x001cb0e0 in ?? () from remote:/lib/ld-linux.so.2
+(gdb) <b>continue</b>
+Continuing.
+Breakpoint 1, main () at main.cpp:13
+13   printf("Di dalam main()\n");
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0x001ca830  0x001e15cf  Yes (*)     remote:/lib/ld-linux.so.2
+0x009d93a0  0x009d94c8  Yes         remote:/tmp/libTest.so
+0x004f7be0  0x00604784  Yes (*)     remote:/lib/i386-linux-gnu/libc.so.6
+(*): Shared library is missing debugging information.
+(gdb) <b>break func</b>
+Breakpoint 2 at 0x9d946e: file lib.cpp, line 9.
+(gdb) <b>continue</b>
+Continuing.
+Breakpoint 2, func () at lib.cpp:9
+9   printf("Di dalam func()\n");
+(gdb) <b>continue</b>
+Continuing.
+[Inferior 1 (process 11124) exited normally]
+(gdb) <b>quit</b>
+    </code>
+</pre>
+<p></p>
+</div></div></div></div>
+</body>
+</html>

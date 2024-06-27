@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah set backtrace past-main</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah set backtrace past-main</h2>
+                    <p> Menentukan apakah GDB akan menampilkan frame-frame di bawah main() dalam backtrace.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>set</b> backtrace past-main <b>on</b><br/>
+                        <b>set</b> backtrace past-main <b>off</b><br/>
+                        <b>show</b> backtrace past-main<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>on</b></dt>
+                        <dd>Dalam mode ini, GDB akan menampilkan frame-frame di bawah main(), seperti mainCRTStartup(). Mode ini berguna saat debugging isu-isu terkait CRT.</dd>
+                        <dt><b>off</b></dt>
+                        <dd>Dalam mode ini, GDB tidak akan menyembunyikan frame-frame di bawah main(). Mode ini dipilih secara default dan berguna saat debugging program normal secara umum.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>backtrace past-main</b> adalah <b>off</b>.</p>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perhatikan bahwa jika Anda mengatur variabel <b>backtrace past-main</b> ke <b>on</b>, GDB akan menampilkan frame-frame di bawah main() namun tidak di bawah titik masuk eksekusi program Anda. Gunakan perintah <b>set backtrace past-entry</b> untuk mengubah perilaku ini.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kami akan melakukan debugging program sederhana yang terdiri dari 2 fungsi:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+void func()
+{
+    printf("Hello from func()\n");
+}
+
+int main(int argc, char *argv[])
+{
+    func();
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Contoh berikut menunjukkan bagaimana perintah <b>set backtrace past-main</b> memengaruhi output dari perintah <a href="backtrace.htm" tppabs="http://visualgdb.com/gdbreference/commands/backtrace"><b>backtrace</b></a>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>break func</b>
+Breakpoint 1 at 0x401392: file 0.cpp, line 5.
+(gdb) <b>run</b>
+Starting program: c:\mingw\bin\0.exe
+[New Thread 176.0xb8]
+
+Breakpoint 1, func () at 0.cpp:5
+5 printf("Hello from func()\n");
+(gdb) <b>show backtrace past-main</b>
+Whether backtraces should continue past "main" is off.
+(gdb) <b>backtrace</b>
+#0 func () at 0.cpp:5
+#1 0x004013b0 in main (argc=1, argv=0x3e3f48) at 0.cpp:10
+(gdb) <b>set backtrace past-main on</b>
+(gdb) <b>backtrace</b>
+#0 func () at 0.cpp:5
+#1 0x004013b0 in main (argc=1, argv=0x3e3f48) at 0.cpp:10
+#2 0x004010b9 in __mingw_CRTStartup () at ../mingw/crt1.c:244
+#3 0x00401284 in mainCRTStartup () at ../mingw/crt1.c:264
+                        </code>
+                    </pre>
+                    <p></p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

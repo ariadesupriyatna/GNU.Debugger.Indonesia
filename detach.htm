@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - Perintah detach</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah detach</h2>
+<p> Melepaskan GDB dari sebuah proses</p>
+
+<h4>Syntax</h4>
+<div class="syntax">
+<b>detach</b><br/>
+</div>
+<p></p>
+<h4>Catatan</h4>
+<p>Setelah GDB dilepaskan dari suatu proses, proses tersebut akan tetap berjalan tanpa debugger yang terhubung. Anda dapat kembali menghubunginya dengan menggunakan perintah <a href="attach.htm" tppabs="http://visualgdb.com/gdbreference/commands/attach"><b>attach</b></a>.</p>
+<p>Catatan bahwa Anda dapat menggunakan perintah <b>detach</b> dalam situasi-situasi berikut:</p>
+<ul>
+<li> Saat Anda telah terhubung ke sebuah proses dengan perintah <a href="attach.htm" tppabs="http://visualgdb.com/gdbreference/commands/attach"><b>attach</b></a></li>
+<li> Saat Anda telah menjalankan proses menggunakan perintah <a href="run.htm" tppabs="http://visualgdb.com/gdbreference/commands/run"><b>run</b></a></li>
+<li> Saat Anda telah terhubung ke gdbserver menggunakan perintah <b>target</b></li>
+</ul>
+<p>Jika Anda ingin menghentikan proses yang sedang di-debug daripada melepaskannya, gunakan perintah <a href="kill.htm" tppabs="http://visualgdb.com/gdbreference/commands/kill"><b>kill</b></a>.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Pada contoh berikut, kami akan menghubungkan GDB ke sebuah proses Linux yang sedang berjalan, melepaskannya, dan kemudian menghubungkannya kembali:</p>
+<pre><div class="code">
+(gdb) <b>attach 14199</b>     
+Melampirkan ke proses 14199     
+Membaca simbol dari /home/testuser/0.elf...selesai.     
+Membaca simbol dari /lib/i386-linux-gnu/libc.so.6...     
+Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/libc-2.15.so...selesai.     
+selesai.     
+Simbol dimuat untuk /lib/i386-linux-gnu/libc.so.6     
+Membaca simbol dari /lib/ld-linux.so.2...     
+Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/ld-2.15.so...selesai.     
+selesai.     
+Simbol dimuat untuk /lib/ld-linux.so.2     
+0xb771f424 di __kernel_vsyscall ()     
+(gdb) <b>detach</b>     
+Melepaskan dari program: /home/testuser/0.elf, proses 14199     
+(gdb) <b>attach 14199</b>     
+Melampirkan ke program: /home/testuser/0.elf, proses 14199     
+Membaca simbol dari /lib/i386-linux-gnu/libc.so.6...     
+Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/libc-2.15.so...selesai.     
+selesai.     
+Simbol dimuat untuk /lib/i386-linux-gnu/libc.so.6     
+Membaca simbol dari /lib/ld-linux.so.2...     
+Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/ld-2.15.so...selesai.     
+selesai.     
+Simbol dimuat untuk /lib/ld-linux.so.2     
+0xb771f424 di __kernel_vsyscall ()     
+(gdb) <b></b>     
+</div></pre>
+<p></p>
+</div></div></div></div>
+</body>
+</html>

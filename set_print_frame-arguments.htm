@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set print frame-arguments</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set print frame-arguments</h2>
+                    <p>Menentukan jenis argumen untuk yang <a href="backtrace.htm"><b>backtrace</b></a> akan menampilkan nilai-nilainya.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> print frame-arguments <b>all</b><br/>
+                        <b>set</b> print frame-arguments <b>scalar</b><br/>
+                        <b>set</b> print frame-arguments <b>none</b><br/>
+                        <b>show</b> print frame-arguments<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt>all</dt>
+                        <dd>Dalam mode ini, perintah <a href="backtrace.htm"><b>backtrace</b></a> akan menampilkan nilai argumen untuk semua jenis argumen termasuk struktur.</dd>
+                        <dt>scalar</dt>
+                        <dd>Dalam mode ini, perintah <a href="backtrace.htm"><b>backtrace</b></a> hanya akan menampilkan nilai argumen untuk argumen skalar (termasuk pointer dan string C).</dd>
+                        <dt>none</dt>
+                        <dd>Dalam mode ini, perintah <a href="backtrace.htm"><b>backtrace</b></a> tidak akan menampilkan nilai untuk semua argumen.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>print frame-arguments</b> adalah scalar.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Untuk mengilustrasikan perintah <b>set print frame-arguments</b>, kita akan menggunakan program C++ sederhana yang memiliki sebuah fungsi yang menerima 2 argumen skalar dan satu argumen struktur:</p>
+                    <pre>
+                        <code>
+struct CompositeStruct     
+{     
+    int Field1, Field2;     
+};     
+
+void testfunc(int arg1, const char *arg2, CompositeStruct arg3)     
+{     
+    asm("int3"); // Breakpoint terpaksa     
+}     
+
+int main(int argc, char **argv)     
+{     
+    CompositeStruct test = {1, 2};     
+    testfunc(123, "test", test);     
+    return 0;     
+}     
+                        </code>
+                    </pre>
+                    <p>Kita akan menjalankan program sampai mencapai breakpoint di dalam testfunc() dan kemudian menggunakan perintah <a href="backtrace.htm"><b>backtrace</b></a> untuk menampilkan frame dan nilai-nilai argumen untuk setiap frame:</p>
+                    <pre>
+                        <code>
+(gdb) <b>run</b>     
+Starting program: /home/bazis/test      
+     
+Program received signal SIGTRAP, Trace/breakpoint trap.     
+testfunc (arg1=123, arg2=0x80484d0 "test", arg3=...) at test.cpp:11     
+11      }     
+(gdb) <b>backtrace</b>     
+#0  testfunc (arg1=123, arg2=0x80484d0 "test", arg3=...) at test.cpp:11     
+#1  0x0804842d in main (argc=1, argv=0xbffff034) at test.cpp:16     
+(gdb) <b>show print frame-arguments</b>     
+Pencetakan argumen frame non-scalar adalah "skalar".     
+(gdb) <b>set print frame-arguments all</b>     
+(gdb) <b>backtrace</b>     
+#0  testfunc (arg1=123, arg2=0x80484d0 "test", arg3={Field1 = 1, Field2 = 2}) at test.cpp:11     
+#1  0x0804842d in main (argc=1, argv=0xbffff034) at test.cpp:16     
+(gdb) <b>set print frame-arguments none</b>     
+(gdb) <b>backtrace</b>     
+#0  testfunc (arg1=..., arg2=..., arg3=...) at test.cpp:11     
+#1  0x0804842d in main (argc=..., argv=...) at test.cpp:16     
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah attach</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>perintah attach</h2>
+<p> Menghubungkan GDB ke proses yang sedang berjalan</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>attach</b> [<i>PID</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>PID</dt>
+<dd>Menentukan pengenal proses dari proses yang akan dihubungkan.</dd>
+</dl>
+<p></p>
+<h4>Catatan</h4>
+<p>Untuk melanjutkan proses setelah Anda menghubungkannya, gunakan perintah <a href="continue.htm" tppabs="http://visualgdb.com/gdbreference/commands/continue"><b>continue</b></a>. Jika Anda menggunakan perintah <a href="run.htm" tppabs="http://visualgdb.com/gdbreference/commands/run"><b>run</b></a> sebagai gantinya, proses akan dimulai ulang.</p>
+<p></p>
+<h4>Pembatasan</h4>
+<p>Saat Anda menghubungkan ke proses dengan GDB, pembatasan berikut diterapkan:</p>
+<ul>
+<li> Untuk menghubungkan ke proses dari terminal Linux yang berbeda, Anda harus menjalankan sebagai root.</li>
+<li> Untuk menghubungkan ke proses di mesin Windows, Anda perlu menjalankan GDB sebagai Administrator.</li>
+<li> Anda tidak dapat menghubungkan dua instance GDB ke proses yang sama.</li>
+<li> Anda tidak dapat menghubungkan GDB ke proses Windows yang sudah sedang di-debug oleh debugger Visual Studio native.</li>
+</ul>
+<p></p>
+<h4>Contoh</h4>
+<p>Dalam contoh berikut, kita menghubungkan GDB ke proses Linux yang sedang berjalan, melihat tumpukan panggilan dan melanjutkan eksekusi:</p>
+<pre><div class="code">
+(gdb) <b>attach 13769</b>     
+Menghubungkan ke proses 13769     
+Membaca simbol dari /home/testuser/0.elf...selesai.     
+Membaca simbol dari /lib/i386-linux-gnu/libc.so.6...     
+Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/libc-2.15.so...selesai.     
+selesai.     
+Memuat simbol untuk /lib/i386-linux-gnu/libc.so.6     
+Membaca simbol dari /lib/ld-linux.so.2...     
+Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/ld-2.15.so...selesai.     
+selesai.     
+Memuat simbol untuk /lib/ld-linux.so.2     
+0xb771b424 in __kernel_vsyscall ()     
+(gdb) <b>bt</b>     
+#0  0xb771b424 in __kernel_vsyscall ()     
+#1  0xb76393c3 in __read_nocancel () at ../sysdeps/unix/syscall-template.S:82     
+#2  0xb75cd22b in _IO_new_file_underflow (fp=0xb7701ac0) at fileops.c:619     
+#3  0xb75ce449 in _IO_default_uflow (fp=0xb7701ac0) at genops.c:440     
+#4  0xb75ce260 in __GI___uflow (fp=0xb7701ac0) at genops.c:394     
+#5  0xb75ae565 in _IO_vfscanf_internal (s=0xb7701ac0, format=0x804856f "%d", argptr=0xbf8778a4 "errp=0x0) at vfscanf.c:620     
+#6  0xb75b0627 in __scanf (format=0x804856f "%d") at scanf.c:35     
+#7  0x08048475 in main (argc=1, argv=0xbf877964) at 0.cpp:7     
+(gdb) <b>continue</b>     
+Melanjutkan.     
+[Inferior 1 (proses 13769) keluar dengan normal]     
+(gdb) <b></b>     
+</div></pre>
+<p></p>
+<h4>Kesalahan umum</h4>
+<p>Dalam contoh ini kita mencoba menghubungkan ke proses Linux yang berjalan di terminal yang berbeda. Ini gagal karena kita tidak menjalankan sebagai root:</p>
+<pre><div class="code">
+(gdb) <b>attach 13618</b>     
+Menghubungkan ke program: /home/testuser/0.elf, proses 13618     
+Tidak dapat menghubungkan ke proses. Jika uid Anda cocok dengan uid dari target     
+proses, periksa pengaturan /proc/sys/kernel/yama/ptrace_scope, atau coba     
+lagi sebagai pengguna root. Untuk lebih jelasnya, lihat /etc/sysctl.d/10-ptrace.conf     
+ptrace: Operasi tidak diizinkan.     
+(gdb) <b></b>     
+</div></pre>
+<p></p>
+
+</div></div></div></div>
+</body>
+</html>

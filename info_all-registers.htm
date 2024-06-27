@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah info registers</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info registers</h2>
+                    <p>Menampilkan isi dari semua register prosesor</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> all-registers<br/>
+                        <b>info</b> all-registers [<i>Nama Register</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nama Register</dt>
+                        <dd>Jika ditentukan, perintah <b>info all-registers</b> akan menampilkan isi dari register tertentu saja. Jika tidak ditentukan, perintah akan menampilkan isi dari semua register CPU.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Jika Anda hanya tertarik untuk melihat nilai dari register umum, gunakan perintah <b>info registers</b> saja.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Berikut adalah contoh output dasar dari perintah <b>info all-registers</b>:</p>
+                    <pre>
+(gdb) <b>start</b>     
+Breakpoint 1 at 0x80483f0: file test.cpp, line 5.     
+Starting program: /home/bazis/test      
+     
+Breakpoint 1, main (argc=1, argv=0xbffff064) at test.cpp:5     
+5               return 0;     
+(gdb) <b>info all-registers </b>     
+eax            0x1      1     
+ecx            0xbffff064       -1073745820     
+edx            0x80483ed        134513645     
+ebx            0xb7fbe000       -1208229888     
+esp            0xbfffefc8       0xbfffefc8     
+ebp            0xbfffefc8       0xbfffefc8     
+esi            0x0      0     
+edi            0x0      0     
+eip            0x80483f0        0x80483f0 &lt;main(int, char**)+3&gt;     
+eflags         0x246    [ PF ZF IF ]     
+cs             0x73     115     
+ss             0x7b     123     
+ds             0x7b     123     
+es             0x7b     123     
+fs             0x0      0     
+gs             0x33     51     
+st0            0        (raw 0x00000000000000000000)     
+st1            0        (raw 0x00000000000000000000)     
+st2            0        (raw 0x00000000000000000000)     
+st3            0        (raw 0x00000000000000000000)     
+st4            0        (raw 0x00000000000000000000)     
+st5            0        (raw 0x00000000000000000000)     
+st6            0        (raw 0x00000000000000000000)     
+st7            0        (raw 0x00000000000000000000)     
+fctrl          0x37f    895     
+fstat          0x0      0     
+ftag           0xffff   65535     
+fiseg          0x0      0     
+fioff          0x0      0     
+foseg          0x0      0     
+fooff          0x0      0     
+fop            0x0      0     
+xmm0           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+xmm1           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+xmm2           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+xmm3           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+xmm4           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+xmm5           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+xmm6           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+xmm7           {v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 &lt;repeats 16 times&gt;}, v8_int16 = {0x0, 0x0, 0x0, 0x0,      
+    0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}     
+mxcsr          0x1f80   [ IM DM ZM OM UM PM ]     
+mm0            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+mm1            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+mm2            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+mm3            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+mm4            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+mm5            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+mm6            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+mm7            {uint64 = 0x0, v2_int32 = {0x0, 0x0}, v4_int16 = {0x0, 0x0, 0x0, 0x0}, v8_int8 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}     
+</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

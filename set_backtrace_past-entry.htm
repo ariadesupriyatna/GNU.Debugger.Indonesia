@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah set backtrace past-entry</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah set backtrace past-entry</h2>
+                    <p> Menentukan apakah GDB akan mencoba membongkar (unwind) frame-frame di bawah titik masuk modul dalam backtrace.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>set</b> backtrace past-entry <b>on</b><br/>
+                        <b>set</b> backtrace past-entry <b>off</b><br/>
+                        <b>show</b> backtrace past-entry<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>on</b></dt>
+                        <dd>Dalam mode ini, GDB akan mencoba untuk membongkar dan menampilkan frame-frame di bawah titik masuk (entry point). Mode ini berguna saat debugging loader kustom dan kode tingkat sistem lainnya. Perhatikan bahwa mode ini tidak akan berpengaruh kecuali jika <b>set backtrace past-main</b> diatur ke <b>on</b>.</dd>
+                        <dt><b>off</b></dt>
+                        <dd>Dalam mode ini, GDB tidak akan menyembunyikan frame-frame di bawah titik masuk.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>backtrace past-entry</b> adalah <b>off</b>.</p>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perhatikan bahwa jika Anda mengatur variabel <b>backtrace past-entry</b> ke <b>on</b>, tanpa mengatur <b>backtrace past-main</b> ke <b>on</b>, GDB akan menghentikan backtrace pada main() dan tidak akan menampilkan titik masuk atau frame-frame di bawahnya.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kami akan melakukan debugging program sederhana yang terdiri dari 2 fungsi:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+void func()
+{
+    printf("Hello from func()\n");
+}
+
+int main(int argc, char *argv[])
+{
+    func();
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Contoh berikut menunjukkan bagaimana perintah <b>set backtrace past-main</b> memengaruhi output dari perintah <a href="backtrace.htm" tppabs="http://visualgdb.com/gdbreference/commands/backtrace"><b>backtrace</b></a>:</p>
+                    <pre>
+                        <code>
+GNU gdb (GDB) 7.5
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law. Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-pc-mingw32".
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;...
+Reading symbols from C:\MinGW32\bin\0.exe...done.
+(gdb) <b>break func</b>
+Breakpoint 1 at 0x4013b6: file 0.cpp, line 5.
+(gdb) <b>run</b>
+Starting program: C:\MinGW32\bin\0.exe
+[New Thread 12304.0x3238]
+
+Breakpoint 1, func () at 0.cpp:5
+5 printf("Hello from func()\n");
+(gdb) <b>backtrace</b>
+#0 func () at 0.cpp:5
+#1 0x004013d4 in main (argc=1, argv=0x9c17f0) at 0.cpp:10
+(gdb) <b>show backtrace past-entry</b>
+Whether backtraces should continue past the entry point of a program is off.
+(gdb) <b>set backtrace past-main on</b>
+(gdb) <b>backtrace</b>
+#0 func () at 0.cpp:5
+#1 0x004013d4 in main (argc=1, argv=0x9c17f0) at 0.cpp:10
+#2 0x004010fd in __mingw_CRTStartup ()
+#3 0x00401295 in mainCRTStartup ()
+(gdb) <b>set backtrace past-entry on</b>
+(gdb) <b>backtrace</b>
+#0 func () at 0.cpp:5
+#1 0x004013d4 in main (argc=1, argv=0x9c17f0) at 0.cpp:10
+#2 0x004010fd in __mingw_CRTStartup ()
+#3 0x00401295 in mainCRTStartup ()
+#4 0x763633aa in KERNEL32!BaseCleanupAppcompatCacheSupport ()
+   from C:\Windows\syswow64\kernel32.dll
+#5 0x0028ffd4 in ?? ()
+#6 0x76fc9f72 in ntdll!RtlpNtSetValueKey ()
+   from C:\Windows\system32\ntdll.dll
+#7 0x7efde000 in ?? ()
+#8 0x76fc9f45 in ntdll!RtlpNtSetValueKey ()
+   from C:\Windows\system32\ntdll.dll
+#9 0x00401280 in _gnu_exception_handler@4 ()
+#10 0xffffffff in ?? ()
+#11 0x77057428 in wcstombs () from C:\Windows\system32\ntdll.dll
+#12 0x00000000 in ?? ()
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Perhatikan bahwa frame-frame di bawah mainCRTStartup() tidak valid karena stack di bawah frame <b>mainCrtStartup()</b> tidak mengandung alamat pengembalian aktual dan tebakan yang dilakukan oleh GDB menghasilkan hasil yang tidak valid.</p>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

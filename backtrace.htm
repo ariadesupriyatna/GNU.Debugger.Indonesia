@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah backtrace</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>perintah backtrace</h2>
+<p> Menampilkan tumpukan panggilan untuk utas yang saat ini dipilih.</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>backtrace</b><br/>
+<b>backtrace</b> [<i>Jumlah Frame</i>]<br/>
+<b>backtrace</b> full [<i>Jumlah Frame</i>]<br/>
+<b>bt</b><br/>
+<b>bt</b> [<i>Jumlah Frame</i>]<br/>
+<b>bt</b> full [<i>Jumlah Frame</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Jumlah Frame</dt>
+<dd>Menentukan jumlah frame yang akan ditampilkan. Jika angka ini positif, GDB akan menampilkan jumlah frame terdalam yang ditentukan. Jika negatif, GDB akan menampilkan jumlah frame terluar yang ditentukan. Jika tidak ada jumlah frame yang ditentukan, GDB akan menampilkan jumlah frame default yang dikonfigurasi menggunakan perintah <b>set backtrace limit</b>.</dd>
+<dt>full</dt>
+<dd>Jika ditentukan, perintah <b>backtrace</b> akan menampilkan informasi tentang variabel lokal untuk setiap frame.</dd>
+</dl>
+<p></p>
+<h4>Catatan</h4>
+<p>Tumpukan panggilan (juga dikenal sebagai backtrace) adalah informasi tentang fungsi saat ini, fungsi yang memanggilnya, fungsi yang memanggil fungsi pemanggil, dan seterusnya. Lihat contoh di bawah untuk lebih jelasnya.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Kami akan menunjukkan cara kerja perintah <b>backtrace</b> menggunakan contoh berikut:</p>
+<pre><div class="code">
+<span class="keyword">#include</span><span class="string">&lt;stdio.h&gt;</span>     
+     
+<span class="keyword">void</span>&nbsp;level0()     
+{     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Reached&nbsp;level&nbsp;0\n"</span>);     
+}     
+     
+<span class="keyword">void</span>&nbsp;test(<span class="keyword">int</span>&nbsp;level)     
+{     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span>&nbsp;(level&nbsp;&gt;&nbsp;0)     
+&nbsp;&nbsp;&nbsp;&nbsp;{     
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span>&nbsp;prevLevel&nbsp;=&nbsp;level&nbsp;-&nbsp;1;     
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Level&nbsp;%d\n"</span>,&nbsp;level);     
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test(prevLevel);     
+&nbsp;&nbsp;&nbsp;&nbsp;}     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span>     
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level0();     
+}     
+     
+<span class="keyword">int</span>&nbsp;main()     
+{     
+&nbsp;&nbsp;&nbsp;&nbsp;test(5);     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;0;     
+}     
+</div></pre>
+<p>Dalam contoh ini, main() memanggil test(5), test(5) memanggil test(4) dan seterusnya sampai test(0) memanggil level0(). Kami akan menempatkan breakpoint di level0() dan menampilkan backtrace yang akan menunjukkan rantai fungsi dari level0() terdalam hingga main() terluar:</p>
+<pre><div class="code">
+(gdb) <b>b level0</b>     
+Breakpoint 1 at 0x804841a: file recursion.cpp, line 5.     
+(gdb) <b>r</b>     
+Starting program: /home/testuser/recursionDemo      
+Level 5     
+Level 4     
+Level 3     
+Level 2     
+Level 1     
+     
+Breakpoint 1, level0 () at recursion.cpp:5     
+5  printf("Reached level 0\n");     
+(gdb) <b>backtrace </b>     
+#0  level0 () at recursion.cpp:5     
+#1  0x08048462 in test (level=0) at recursion.cpp:17     
+#2  0x0804845b in test (level=1) at recursion.cpp:14     
+#3  0x0804845b in test (level=2) at recursion.cpp:14     
+#4  0x0804845b in test (level=3) at recursion.cpp:14     
+#5  0x0804845b in test (level=4) at recursion.cpp:14     
+#6  0x0804845b in test (level=5) at recursion.cpp:14     
+#7  0x08048479 in main () at recursion.cpp:22     
+(gdb) <b>backtrace full</b>     
+#0  level0 () at recursion.cpp:5     
+No locals.     
+#1  0x08048462 in test (level=0) at recursion.cpp:17     
+No locals.     
+#2  0x0804845b in test (level=1) at recursion.cpp:14     
+		prevLevel = 0     
+#3  0x0804845b in test (level=2) at recursion.cpp:14     
+		prevLevel = 1     
+#4  0x0804845b in test (level=3) at recursion.cpp:14     
+		prevLevel = 2     
+#5  0x0804845b in test (level=4) at recursion.cpp:14     
+		prevLevel = 3     
+#6  0x0804845b in test (level=5) at recursion.cpp:14     
+		prevLevel = 4     
+#7  0x08048479 in main () at recursion.cpp:22     
+No locals.     
+(gdb) <b>backtrace 2</b>     
+#0  level0 () at recursion.cpp:5     
+#1  0x08048462 in test (level=0) at recursion.cpp:17     
+(More stack frames follow...)     
+(gdb) <b>backtrace -2</b>     
+#6  0x0804845b in test (level=5) at recursion.cpp:14     
+#7  0x08048479 in main () at recursion.cpp:22     
+</div></pre>
+<p></p>
+
+</div></div></div></div>
+</body>
+</html>

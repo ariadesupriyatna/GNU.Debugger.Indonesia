@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set stop-on-solib-events</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set stop-on-solib-events</h2>
+                    <p>Menentukan apakah GDB harus berhenti ketika sebuah shared library dimuat atau dimuat ulang.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> stop-on-solib-events <b>0</b><br/>
+                        <b>set</b> stop-on-solib-events <b>1</b><br/>
+                        <b>show</b> stop-on-solib-events<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>0</b></dt>
+                        <dd>GDB tidak akan berhenti ketika sebuah shared library dimuat atau dimuat ulang. GDB akan secara otomatis memperbarui breakpoint Anda dan melanjutkan eksekusi.</dd>
+                        <dt><b>1</b></dt>
+                        <dd>Ketika sebuah shared library dimuat atau dimuat ulang, GDB akan berhenti seolah-olah sebuah breakpoint telah tercapai. Anda akan memiliki kesempatan untuk memeriksa library yang dimuat, mengubah breakpoint Anda, dan melanjutkan eksekusi.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>stop-on-solib-events</b> adalah 0.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan melakukan debugging sebuah shared library sederhana:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int func()
+{
+    printf("Di dalam func()\n");
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Kita akan menggunakan program sederhana untuk menguji library kita:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int func();
+
+int main()
+{
+    printf("Di dalam main()\n");
+    func();
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Kita akan membangun aplikasi dan library:</p>
+                    <pre>
+                        <code>
+cd /home/testuser/libtest
+g++ -ggdb -fPIC -shared lib.cpp -o libTest.so
+g++ -ggdb main.cpp libTest.so -o testApp -Wl,--rpath='$ORIGIN'
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Lalu kita akan menjalankan GDB dan mengaktifkan opsi <b>set stop-on-solib-events</b>:</p>
+                    <pre>
+                        <code>
+cd /home/testuser/libtest
+gdb testApp
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Perhatikan bagaimana GDB akan berhenti ketika ld-linux.so dan libTest.so dimuat:</p>
+                    <pre>
+                        <code>
+GNU gdb (Ubuntu/Linaro 7.4-2012.02-0ubuntu2) 7.4-2012.02
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+Ini adalah perangkat lunak bebas: Anda dapat mengubah dan mendistribusikannya.
+TIDAK ADA JAMINAN, sejauh yang diizinkan oleh hukum. Ketik "show copying"
+dan "show warranty" untuk detailnya.
+GDB ini dikonfigurasi sebagai "i686-linux-gnu".
+Untuk instruksi pelaporan bug, silakan lihat:
+<http://bugs.launchpad.net/gdb-linaro/>
+
+Reading symbols from /home/testuser/libtest/testApp...done.
+(gdb) <b>show stop-on-solib-events </b>
+Berhenti untuk peristiwa shared library adalah 0.
+(gdb) <b>set stop-on-solib-events 1</b>
+(gdb) <b>run</b>
+Memulai program: /home/testuser/libtest/testApp
+Berhenti karena peristiwa shared library
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes (*)     /lib/ld-linux.so.2
+(*): Shared library is missing debugging information.
+(gdb) <b>continue</b>
+Melanjutkan.
+Berhenti karena peristiwa shared library
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes (*)     /lib/ld-linux.so.2
+0xb7fd83a0  0xb7fd84c8  Yes         /home/testuser/libtest/libTest.so
+0xb7e35f10  0xb7f6635c  Yes (*)     /lib/i386-linux-gnu/libc.so.6
+(*): Shared library is missing debugging information.
+(gdb) <b>continue</b>
+Melanjutkan.
+Di dalam main()
+Di dalam func()
+[Inferior 1 (process 5936) exited normally]
+(gdb) <b>quit</b>
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

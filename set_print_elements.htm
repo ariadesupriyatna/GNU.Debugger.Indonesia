@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set print elements</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set print elements</h2>
+                    <p>Menentukan jumlah maksimum elemen array (atau karakter string) yang ditampilkan oleh perintah <a href="print.htm"><b>print</b></a>.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> print elements [<i>Elemen</i>]<br/>
+                        <b>set</b> print elements 0<br/>
+                        <b>show</b> print elements<br/>
+                    </div>
+                    <p></p>
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Elemen</dt>
+                        <dd>Menentukan jumlah maksimum elemen array (atau karakter string) yang akan ditampilkan oleh perintah <a href="print.htm"><b>print</b></a> saat menampilkan konten array/string. Jika parameter ini adalah 0, GDB tidak akan memiliki batasan pada jumlah elemen/karakter yang ditampilkan.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>print elements</b> adalah 200.</p>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Tidak disarankan untuk menghapus batasan elemen sepenuhnya, untuk menghindari keterlambatan saat mengevaluasi string yang tidak ditamatkan dengan benar.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Berikut adalah log dari sesi GDB contoh yang mengilustrasikan bagaimana perintah <b>set print elements</b> mempengaruhi tampilan array dan string menggunakan perintah <a href="print.htm"><b>print</b></a>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>set args arg1 arg2 arg3 arg4</b>
+(gdb) <b>start</b>
+Breakpoint sementara 1 di 0x80483f0: file test.cpp, baris 5.
+Starting program: /home/bazis/test arg1 arg2 arg3 arg4
+
+Breakpoint sementara 1, main (argc=5, argv=0xbffff034) di test.cpp:5
+5 return 0;
+(gdb) <b>print *argv@argc</b>
+$1 = {0xbffff21e "/home/bazis/test", 0xbffff22f "arg1", 0xbffff234 "arg2", 0xbffff239 "arg3", 0xbffff23e "arg4"}
+(gdb) <b>show print elements</b>
+Batas karakter string atau elemen array yang dapat dicetak adalah 200.
+(gdb) <b>set print elements 3</b>
+(gdb) <b>print *argv@argc</b>
+$2 = {0xbffff21e "/ho"..., 0xbffff22f "arg"..., 0xbffff234 "arg"...}
+(gdb) <b>set print elements 5</b>
+(gdb) <b>print *argv@argc</b>
+$3 = {0xbffff21e "/home"..., 0xbffff22f "arg1", 0xbffff234 "arg2", 0xbffff239 "arg3", 0xbffff23e "arg4"}
+(gdb) <b>set print elements 0</b>
+(gdb) <b>show print elements</b>
+Batas karakter string atau elemen array yang dapat dicetak tidak terbatas.
+(gdb) <b>print *argv@argc</b>
+$4 = {0xbffff21e "/home/bazis/test", 0xbffff22f "arg1", 0xbffff234 "arg2", 0xbffff239 "arg3", 0xbffff23e "arg4"}
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

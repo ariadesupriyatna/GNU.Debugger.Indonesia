@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info files</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info files</h2>
+                    <p>Menampilkan informasi tentang binary yang sedang didebug dan bagian-bagian yang dimuat.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> files<br />
+                    </div>
+                    <p></p>
+
+                    <h4>Keterangan</h4>
+                    <p>Jika Anda ingin melihat daftar file sumber, gunakan perintah <b>info sources</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan beberapa penggunaan perintah <b>info files</b> menggunakan program C++ dasar:</p>
+                    <pre>
+                        <code>
+(gdb) info files
+Symbols from "/home/bazis/test".
+Local exec file:
+        `/home/bazis/test', file type elf32-i386.
+        Entry point: 0x80482f0
+        0x08048154 - 0x08048167 is .interp
+        0x08048168 - 0x08048188 is .note.ABI-tag
+        0x08048188 - 0x080481ac is .note.gnu.build-id
+        0x080481ac - 0x080481cc is .gnu.hash
+        0x080481cc - 0x0804820c is .dynsym
+        0x0804820c - 0x08048251 is .dynstr
+        0x08048252 - 0x0804825a is .gnu.version
+        0x0804825c - 0x0804827c is .gnu.version_r
+        0x0804827c - 0x08048284 is .rel.dyn
+        0x08048284 - 0x08048294 is .rel.plt
+        0x08048294 - 0x080482b7 is .init
+        0x080482c0 - 0x080482f0 is .plt
+        0x080482f0 - 0x08048472 is .text
+        0x08048474 - 0x08048488 is .fini
+        0x08048488 - 0x08048490 is .rodata
+        0x08048490 - 0x080484bc is .eh_frame_hdr
+        0x080484bc - 0x0804856c is .eh_frame
+        0x08049f08 - 0x08049f0c is .init_array
+        0x08049f0c - 0x08049f10 is .fini_array
+        0x08049f10 - 0x08049f14 is .jcr
+        0x08049f14 - 0x08049ffc is .dynamic
+        0x08049ffc - 0x0804a000 is .got
+        0x0804a000 - 0x0804a014 is .got.plt
+        0x0804a014 - 0x0804a01c is .data
+        0x0804a01c - 0x0804a020 is .bss
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

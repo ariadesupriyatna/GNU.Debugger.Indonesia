@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah set auto-solib-add</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah set auto-solib-add</h2>
+                    <p> Menentukan apakah GDB harus secara otomatis memuat simbol saat mendeteksi bahwa sebuah pustaka bersama telah dimuat.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>set</b> auto-solib-add <b>on</b><br/>
+                        <b>set</b> auto-solib-add <b>off</b><br/>
+                        <b>show</b> auto-solib-add<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>on</b></dt>
+                        <dd>Dalam mode ini, GDB akan secara otomatis memuat simbol-simbol saat mendeteksi bahwa sebuah pustaka bersama telah dimuat.</dd>
+                        <dt><b>off</b></dt>
+                        <dd>Dalam mode ini, GDB tidak akan secara otomatis memuat simbol-simbol untuk pustaka bersama yang baru dimuat. Anda dapat memuat simbol-simbol secara manual menggunakan perintah <a href="sharedlibrary.htm" tppabs="http://visualgdb.com/gdbreference/commands/sharedlibrary"><b>sharedlibrary</b></a>.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>auto-solib-add</b> adalah <b>on</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan melakukan debug pada program sederhana yang memuat dan membebaskan (unload) sebuah pustaka bersama secara berulang:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+#include <dlfcn.h>
+
+int main()
+{
+    for (int i = 0; i < 5; i++)
+    {
+        void *p = dlopen("./libTest.so", RTLD_NOW);
+        printf("Loaded library\n");
+        dlclose(p);
+        printf("Unloaded library\n");
+    }
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Contoh berikut menunjukkan bagaimana perintah <b>set auto-solib-add</b> dapat menonaktifkan pembebanan simbol secara otomatis yang biasanya dilakukan oleh GDB:</p>
+                    <pre>
+                        <code>
+(gdb) <b>break 8</b>
+Breakpoint 1 at 0x80484b7: file main.cpp, line 8.
+(gdb) <b>run</b>
+Starting program: /home/testuser/libtest/testApp
+
+Breakpoint 1, main () at main.cpp:8
+8  void *p = dlopen("./libTest.so", RTLD_NOW);
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes         /lib/ld-linux.so.2
+0xb7fc2a60  0xb7fc3a08  Yes         /lib/i386-linux-gnu/libdl.so.2
+0xb7e2ef10  0xb7f635cc  Yes         /lib/i386-linux-gnu/libc.so.6
+(gdb) <b>next</b>
+9  printf("Loaded library\n");
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes         /lib/ld-linux.so.2
+0xb7fc2a60  0xb7fc3a08  Yes         /lib/i386-linux-gnu/libdl.so.2
+0xb7e2ef10  0xb7f635cc  Yes         /lib/i386-linux-gnu/libc.so.6
+0xb7fd83a0  0xb7fd84c8  Yes         ./libTest.so
+(gdb) <b>continue</b>
+Continuing.
+Loaded library
+Unloaded library
+
+Breakpoint 1, main () at main.cpp:8
+8  void *p = dlopen("./libTest.so", RTLD_NOW);
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes         /lib/ld-linux.so.2
+0xb7fc2a60  0xb7fc3a08  Yes         /lib/i386-linux-gnu/libdl.so.2
+0xb7e2ef10  0xb7f635cc  Yes         /lib/i386-linux-gnu/libc.so.6
+(gdb) <b>set auto-solib-add off</b>
+(gdb) <b>next</b>
+9  printf("Loaded library\n");
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes         /lib/ld-linux.so.2
+0xb7fc2a60  0xb7fc3a08  Yes         /lib/i386-linux-gnu/libdl.so.2
+0xb7e2ef10  0xb7f635cc  Yes         /lib/i386-linux-gnu/libc.so.6
+0xb7fd83a0  0xb7fd84c8  No          ./libTest.so
+(gdb) <b>sharedlibrary</b>
+Reading symbols from ./libTest.so...done.
+Loaded symbols for ./libTest.so
+(gdb) <b>info shared</b>
+From        To          Syms Read   Shared Object Library
+0xb7fde820  0xb7ff6b9f  Yes         /lib/ld-linux.so.2
+0xb7fc2a60  0xb7fc3a08  Yes         /lib/i386-linux-gnu/libdl.so.2
+0xb7e2ef10  0xb7f635cc  Yes         /lib/i386-linux-gnu/libc.so.6
+0xb7fd83a0  0xb7fd84c8  Yes         ./libTest.so
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

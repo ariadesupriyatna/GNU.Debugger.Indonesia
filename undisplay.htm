@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah undisplay</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah undisplay</h2>
+<p>Menghapus ekspresi yang ditampilkan secara otomatis sebelumnya yang disetel dengan perintah display.</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>udisplay</b> [<i>Nomor ekspresi</i>]<br/>
+<b>undisplay</b><br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Nomor ekspresi</dt>
+<dd>Menentukan nomor ekspresi (seperti yang dilaporkan oleh perintah <b>display</b>) yang harus dihapus. Jika tidak ada nomor ekspresi yang spesifik, perintah <b>undisplay</b> akan menghapus semua ekspresi yang ditampilkan secara otomatis.</dd>
+</dl>
+<p></p>
+<h4>Contoh</h4>
+<p>Kami akan menunjukkan penggunaan perintah <b>undisplay</b> menggunakan program sederhana yang menampilkan argumennya dalam sebuah loop:</p>
+<pre><div class="code">
+#include <stdio.h>
+
+int main(int argc, char **argv)
+{
+    for (int i = 0; i < argc; i++)
+        printf("Arg %d: %s\n", i, argv[i]);
+    return 0;
+}
+</div></pre>
+<p>Kami akan menggunakan perintah <a href="display.htm"><b>display</b></a> untuk membiarkan GDB menampilkan nilai penghitung loop dan argumen yang ditampilkan saat setiap langkah, kemudian menggunakan perintah <b>undisplay</b> untuk menghapus beberapa ekspresi tersebut:</p>
+<pre><div class="code">
+(gdb) <b>set args arg1 arg2 arg3</b>
+(gdb) <b>start</b>
+Breakpoint sementara 1 di 0x8048426: file test.cpp, line 5.
+Starting program: /home/bazis/test arg1 arg2 arg3
+
+Breakpoint sementara 1, main (argc=4, argv=0xbffff024) at test.cpp:5
+5         for(int i = 0; i < argc; i++)
+(gdb) <b>next</b>
+6               printf("Arg %d: %s\n", i, argv[i]);
+(gdb) <b>display/x i</b>
+1: /x i = 0x0
+(gdb) <b>display argv[i]</b>
+2: argv[i] = 0xbffff204 "/home/bazis/test"
+(gdb) <b>next</b>
+Arg 0: /home/bazis/test
+5         for(int i = 0; i < argc; i++)
+2: argv[i] = 0xbffff204 "/home/bazis/test"
+1: /x i = 0x0
+(gdb) <b>next</b>
+6               printf("Arg %d: %s\n", i, argv[i]);
+2: argv[i] = 0xbffff215 "arg1"
+1: /x i = 0x1
+(gdb) <b>display</b>
+2: argv[i] = 0xbffff215 "arg1"
+1: /x i = 0x1
+(gdb) <b>undisplay 1</b>
+(gdb) <b>next</b>
+Arg 1: arg1
+5         for(int i = 0; i < argc; i++)
+2: argv[i] = 0xbffff215 "arg1"
+(gdb) <b>undisplay</b>
+Delete all auto-display expressions? (y or n) y
+(gdb) <b>next</b>
+Arg 2: arg2
+5         for(int i = 0; i < argc; i++)
+(gdb) <b>next</b>
+6               printf("Arg %d: %s\n", i, argv[i]);
+(gdb) <b>print i</b>
+$1 = 3
+</div></pre>
+<p></p>
+
+</div></div></div></div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set disassembly-flavor</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set disassembly-flavor</h2>
+                    <p>Mengatur gaya disassembly yang digunakan oleh perintah <a href="disassemble.htm" tppabs="http://visualgdb.com/gdbreference/commands/disassemble"><b>disassemble</b></a> dan <a href="x.htm" tppabs="http://visualgdb.com/gdbreference/commands/x"><b>x</b></a>.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> disassembly-flavor <b>att</b><br/>
+                        <b>set</b> disassembly-flavor <b>intel</b><br/>
+                        <b>show</b> disassembly-flavor<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>att</b></dt>
+                        <dd>GDB akan menggunakan gaya disassembly AT&T (contoh: <b>mov 0xc(%ebp),%eax</b>) yang populer di kalangan pengguna Linux.</dd>
+                        <dt><b>intel</b></dt>
+                        <dd>GDB akan menggunakan gaya disassembly Intel (contoh: <b>mov eax, DWORD PTR [ebp+0xc]</b>) yang populer di kalangan pengguna Windows.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>disassembly-flavor</b> adalah 'att'.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan melakukan disassembly dari sebuah fungsi sederhana menggunakan gaya AT&T dan Intel:</p>
+                    <pre>
+                        <code>
+int func(int a, int b)
+{
+    return a + b;
+}
+                        </code>
+                    </pre>
+                    <p>Kita akan mengompilasi tanpa optimasi dan memuatnya ke dalam GDB:</p>
+                    <pre>
+                        <code>
+(gdb) <b>show disassembly-flavor</b>
+The disassembly flavor is "att".
+(gdb) <b>disassemble func</b>
+Dump of assembler code for function func:
+   0x080483ed &lt;+0&gt;:     push   %ebp
+   0x080483ee &lt;+1&gt;:     mov    %esp,%ebp
+   0x080483f0 &lt;+3&gt;:     mov    0xc(%ebp),%eax
+   0x080483f3 &lt;+6&gt;:     mov    0x8(%ebp),%edx
+   0x080483f6 &lt;+9&gt;:     add    %edx,%eax
+   0x080483f8 &lt;+11&gt;:    pop    %ebp
+   0x080483f9 &lt;+12&gt;:    ret
+End of assembler dump.
+(gdb) <b>set disassembly-flavor intel</b>
+(gdb) <b>disassemble func</b>
+Dump of assembler code for function func:
+   0x080483ed &lt;+0&gt;:     push   ebp
+   0x080483ee &lt;+1&gt;:     mov    ebp,esp
+   0x080483f0 &lt;+3&gt;:     mov    eax,DWORD PTR [ebp+0xc]
+   0x080483f3 &lt;+6&gt;:     mov    edx,DWORD PTR [ebp+0x8]
+   0x080483f6 &lt;+9&gt;:     add    eax,edx
+   0x080483f8 &lt;+11&gt;:    pop    ebp
+   0x080483f9 &lt;+12&gt;:    ret
+End of assembler dump.
+(gdb) <b>x/2i func</b>
+   0x80483ed &lt;func&gt;:    push   ebp
+   0x80483ee &lt;func+1&gt;:  mov    ebp,esp
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

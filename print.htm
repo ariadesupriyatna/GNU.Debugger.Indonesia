@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah print</title></head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="main">
+                <h2>perintah print</h2>
+                <p>Mencetak nilai dari suatu ekspresi yang diberikan.</p>
+
+                <h4>Sintaks</h4>
+                <div class="syntax">
+                    <b>print</b> [<i>Ekspresi</i>]<br/>
+                    <b>print</b> $[<i>Nomor nilai sebelumnya</i>]<br/>
+                    <b>print</b> {[<i>Tipe</i>]}[<i>Alamat</i>]<br/>
+                    <b>print</b> [<i>Elemen pertama</i>]@[<i>Jumlah elemen</i>]<br/>
+                    <b>print</b> /[<i>Format</i>] [<i>Ekspresi</i>]<br/>
+                </div>
+                <p></p>
+
+                <h4>Parameter</h4>
+                <dl>
+                    <dt>Ekspresi</dt>
+                    <dd>Menyatakan ekspresi yang akan dievaluasi dan dicetak. Ekspresi dapat mencakup referensi ke variabel (mis. i), register (mis. $eax), dan pseudo-register (mis. $pc). Perhatikan bahwa jika ekspresi Anda merujuk pada variabel lokal, Anda perlu memastikan bahwa frame yang benar telah dipilih.</dd>
+                    <dt>Nomor nilai sebelumnya</dt>
+                    <dd>Jika digunakan dan <b>i</b> disebutkan sebagai nomor nilai sebelumnya, perintah <b>print</b> akan mengulangi output yang dihasilkan oleh invokasi ke-i.</dd>
+                    <dt>Tipe/Alamat</dt>
+                    <dd>Format ini memungkinkan untuk secara eksplisit menentukan alamat dari ekspresi yang dievaluasi dan dapat digunakan sebagai pintasan untuk konversi tipe C/C++. Contoh: <b>*((int *)p)</b> setara dengan <b>{int}p</b></dd>
+                    <dt>Elemen pertama/Jumlah elemen</dt>
+                    <dd>Formulir ini memungkinkan menginterpretasikan ekspresi <b>Elemen pertama</b> sebagai array dari <b>Jumlah elemen</b> elemen berurutan. Contoh umumnya adalah <b>*argv@argc</b></dd>
+                    <dt>Format</dt>
+                    <dd>Jika ditentukan, memungkinkan mengganti format output yang digunakan oleh perintah. Spesifikasi format yang valid adalah:</dd>
+                </dl>
+                <ul>
+                    <li> o - oktal</li>
+                    <li> x - heksadesimal</li>
+                    <li> u - desimal tanpa tanda</li>
+                    <li> t - biner</li>
+                    <li> f - floating point</li>
+                    <li> a - alamat</li>
+                    <li> c - char</li>
+                    <li> s - string</li>
+                </ul>
+                <p></p>
+
+                <h4>Contoh</h4>
+                <p>Kami akan menunjukkan penggunaan perintah <b>print</b> menggunakan program C++ sederhana yang mencetak argumen baris perintahnya sendiri:</p>
+                <pre>
+                    <code>
+#include &lt;stdio.h&gt;
+
+int main(int argc, char **argv)
+{
+    for(int i = 0; i &lt; argc; i++)
+        printf("Arg %d: %s\n", i, argv[i]);
+    return 0;
+}
+                    </code>
+                </pre>
+                <p>Kami akan memasuki loop dan menggunakan beberapa bentuk <b>print</b> untuk menampilkan nilai dari berbagai variabel:</p>
+                <pre>
+                    <code>
+(gdb) <b>set args arg1 arg2 arg3</b>
+(gdb) <b>start</b>
+Temporary breakpoint 1 at 0x8048426: file test.c, line 5.
+Starting program: /home/bazis/test arg1 arg2 arg3
+
+Temporary breakpoint 1, main (argc=4, argv=0xbffff024) at test.c:5
+warning: Source file is more recent than executable.
+5         for(int i = 0; i &lt; argc; i++)
+(gdb) <b>next</b>
+6               printf("Arg %d: %si, argv[i]);
+(gdb) <b>print i</b>
+$1 = 0
+(gdb) <b>print argv[i]</b>
+$2 = 0xbffff204 "/home/bazis/test"
+(gdb) <b>print /a argv[i]</b>
+$3 = 0xbffff204
+(gdb) <b>print /s argv[i]</b>
+$4 = 0xbffff204 "/home/bazis/test"
+(gdb) <b>print /c argv[i]</b>
+$5 = 4 '\004'
+(gdb) <b>print *argv</b>
+$6 = 0xbffff204 "/home/bazis/test"
+(gdb) <b>print *argv@argc</b>
+$7 = {0xbffff204 "/home/bazis/test", 0xbffff215 "arg1", 0xbffff21a "arg2", 0xbffff21f "arg3"}
+(gdb) <b>print {void *}argv@argc</b>
+$8 = {0xbffff204, 0xbffff215, 0xbffff21a, 0xbffff21f}
+(gdb) <b>print $2</b>
+$9 = 0xbffff204 "/home/bazis/test"
+(gdb) <b>next</b>
+Arg 0: /home/bazis/test
+5         for(int i = 0; i &lt; argc; i++)
+(gdb) <b>next</b>
+6               printf("Arg %d: %si, argv[i]);
+(gdb) <b>print $2</b>
+$10 = 0xbffff204 "/home/bazis/test"
+(gdb) <b>print argv[i]</b>
+$11 = 0xbffff215 "arg1"
+(gdb) <b>print /t argv[i]</b>
+$12 = 10111111111111111111001000010101
+                    </code>
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

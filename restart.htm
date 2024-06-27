@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah restart</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah restart</h2>
+                    <p> Beralih sesi debugging ke checkpoint yang ditentukan</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>restart</b> [<i>Nomor checkpoint</i>]<br/>
+                        <b>restart</b> 0<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nomor checkpoint</dt>
+                        <dd>Menentukan nomor dari checkpoint yang sebelumnya dibuat menggunakan perintah <a href="checkpoint.htm" tppabs="http://visualgdb.com/gdbreference/commands/checkpoint"><b>checkpoint</b></a>. Jika disebutkan 0, GDB akan beralih untuk melakukan debugging pada proses asli.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Catatan bahwa sebuah checkpoint adalah cabang eksekusi lain (fork), bukan snapshot. Jika Anda beralih ke suatu checkpoint tertentu dan melanjutkan eksekusi dari sana, status checkpoint akan diperbarui juga. Jika Anda ingin melanjutkan dari suatu checkpoint sambil mempertahankan status checkpoint, buatlah checkpoint lain sebelum melanjutkan dari yang lain.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan penggunaan perintah <b>restart</b> menggunakan program C++ sederhana yang mengiterasi dari 0 hingga 9 dan menampilkan pesan pada setiap iterasinya:</p>
+                    <p></p>
+                    <pre>
+                        <code>
+#include &lt;stdio.h&gt;
+
+int main(int argc, char **argv)
+{
+    for (int i = 0; i &lt; argc; i++)
+        printf("Arg %d: %s\n", i, argv[i]);
+    return 0;
+}
+                    </code>
+                    </pre>
+                    <p>Kami akan membuat beberapa checkpoint pada tahap-tahap yang berbeda dari eksekusi dan menggunakan perintah <b>info checkpoints</b> untuk menampilkan informasi tentang mereka.</p>
+                    <pre>
+                        <code>
+(gdb) <b>start</b>
+Temporary breakpoint 1 at 0x804847a: file test.cpp, line 11.
+Starting program: /home/bazis/test
+
+Temporary breakpoint 1, main (argc=1, argv=0xbffff064) at test.cpp:11
+11              for (int i = 0; i &lt; 10; i++)
+(gdb) <b>next</b>
+12                      report(i);
+(gdb) <b>set variable i = 5</b>
+(gdb) <b>checkpoint</b>
+checkpoint: fork returned pid 2113.
+(gdb) <b>step</b>
+report (iteration=5) at test.cpp:6
+6               printf("Pid %d, iteration %dgetpid(), iteration);
+(gdb) <b>break</b>
+Breakpoint 2 at 0x8048453: file test.cpp, line 6.
+(gdb) <b>continue</b>
+Continuing.
+Pid 2109, iteration 5
+
+Breakpoint 2, report (iteration=6) at test.cpp:6
+6               printf("Pid %d, iteration %dgetpid(), iteration);
+(gdb) <b>continue 3</b>
+Will ignore next 2 crossings of breakpoint 2.  Continuing.
+Pid 2109, iteration 6
+Pid 2109, iteration 7
+Pid 2109, iteration 8
+
+Breakpoint 2, report (iteration=9) at test.cpp:6
+6               printf("Pid %d, iteration %dgetpid(), iteration);
+(gdb) <b>restart 1</b>
+Switching to process 2113
+#0  main (argc=1, argv=0xbffff064) at test.cpp:12
+12                      report(i);
+(gdb) <b>next</b>
+
+Breakpoint 2, report (iteration=5) at test.cpp:6
+6               printf("Pid %d, iteration %dgetpid(), iteration);
+(gdb) <b>restart 0</b>
+Switching to process 2109
+#0  report (iteration=9) at test.cpp:6
+6               printf("Pid %d, iteration %dgetpid(), iteration);
+(gdb) <b>restart 1</b>
+Switching to process 2113
+#0  report (iteration=5) at test.cpp:6
+6               printf("Pid %d, iteration %dgetpid(), iteration);
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info functions</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info functions</h2>
+                    <p>Menampilkan daftar fungsi dalam program yang sedang di-debug.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> functions<br/>
+                        <b>info</b> functions [<i>Regex</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Regex</dt>
+                        <dd>Jika ditentukan, perintah <b>info functions</b> akan menampilkan daftar fungsi yang cocok dengan regex tersebut. Jika tidak ditentukan, perintah ini akan menampilkan semua fungsi dalam semua modul yang dimuat (program utama dan pustaka bersama).</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Keterangan</h4>
+                    <p>Perlu diperhatikan bahwa menjalankan perintah <b>info functions</b> tanpa argumen dapat menghasilkan banyak output karena daftar semua fungsi dalam semua pustaka bersama yang dimuat biasanya sangat panjang.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Berikut ini adalah penggunaan contoh dari perintah <b>info functions</b> untuk sebuah program yang sangat dasar hanya berisi fungsi <b>main()</b>:</p>
+                    <pre>
+                        <code>
+(gdb) help info functions
+All function names, or those matching REGEXP.
+(gdb) info functions
+All defined functions:
+
+File test.cpp:
+int main(int, char**);
+static void _GLOBAL__sub_I_main();
+static void __static_initialization_and_destruction_0(int, int);
+
+Non-debugging symbols:
+0x080484fc  _init
+0x08048530  __cxa_atexit@plt
+0x08048540  __gmon_start__@plt
+0x08048550  _ZNSt8ios_base4InitC1Ev@plt
+0x08048560  __libc_start_main@plt
+0x08048570  _ZNSt8ios_base4InitD1Ev@plt
+0x08048580  _ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc@plt
+0x08048590  _ZNSolsEPFRSoS_E@plt
+0x080485a0  _ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_@plt
+0x080485b0  _start
+0x080485e0  __x86.get_pc_thunk.bx
+0x080485f0  deregister_tm_clones
+0x08048620  register_tm_clones
+0x08048660  __do_global_dtors_aux
+0x08048680  frame_dummy
+0x08048740  __libc_csu_init
+0x080487b0  __libc_csu_fini
+0x080487b4  _fini
+(gdb) info functions ^main
+All functions matching regular expression "^main":
+
+File test.cpp:
+int main(int, char**);
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

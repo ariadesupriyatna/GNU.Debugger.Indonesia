@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set disassemble-next-line</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set disassemble-next-line</h2>
+                    <p>Mengatur apakah GDB harus menampilkan disassembly dari baris berikutnya setiap kali berhenti di breakpoint atau setelah langkah.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> disassemble-next-line <b>on</b><br/>
+                        <b>set</b> disassemble-next-line <b>off</b><br/>
+                        <b>show</b> disassemble-next-line<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>off</b></dt>
+                        <dd>Setiap kali GDB berhenti di breakpoint atau setelah menjalankan langkah, hanya baris kode sumber berikutnya yang ditampilkan, tanpa disassembly.</dd>
+                        <dt><b>on</b></dt>
+                        <dd>Setiap kali GDB berhenti di breakpoint atau setelah menjalankan langkah, baris kode sumber berikutnya ditampilkan diikuti dengan disassembly dari baris tersebut.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>disassemble-next-line</b> adalah 'off'.</p>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Mengaktifkan pengaturan <b>disassemble-next-line</b> dapat berguna saat melakukan langkah demi langkah kode (<b>stepi</b>/<b>nexti</b>) atau saat debugging kode yang dioptimalkan.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan debug program C sederhana yang terdiri dari 2 fungsi:</p>
+                    <pre>
+                        <code>
+int func(int a, int b)
+{
+    return a + b;
+}
+
+int main()
+{
+    return func(1, 2);
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Pertama, kita akan menjalankannya secara normal dan kemudian mengaktifkan pengaturan <b>disassemble-next-line</b>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>show disassemble-next-line</b>
+Debugger's willingness to use disassemble-next-line is off.
+(gdb) <b>start</b>
+Temporary breakpoint 1 at 0x8048400: file test.c, line 8.
+Starting program: /home/bazis/test
+s
+Temporary breakpoint 1, main () at test.c:8
+8         return func(1, 2);
+(gdb) <b>step</b>
+func (a=1, b=2) at test.c:3
+3         return a + b;
+(gdb) <b>set disassemble-next-line on</b>
+(gdb) <b>next</b>
+4       }
+=&gt; 0x080483f8 &lt;func+11&gt;:        5d      pop    %ebp
+   0x080483f9 &lt;func+12&gt;:        c3      ret
+(gdb) <b>next</b>
+main () at test.c:9
+9       }
+=&gt; 0x08048414 &lt;main+26&gt;:       c9      leave
+   0x08048415 &lt;main+27&gt;:       c3      ret
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

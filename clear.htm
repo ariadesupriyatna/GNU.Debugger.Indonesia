@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - Perintah clear</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah clear</h2>
+<p>Menghapus breakpoint pada lokasi tertentu.</p>
+
+<h4>Syntax</h4>
+<div class="syntax">
+<b>clear</b><br/>
+<b>clear</b> [<i>Lokasi</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Lokasi</dt>
+<dd>Menentukan lokasi breakpoint yang akan dihapus (lihat perintah <a href="break.htm"><b>break</b></a> untuk detailnya). Jika tidak ditentukan, GDB akan mencoba menghapus breakpoint di lokasi saat ini.</dd>
+</dl>
+<p></p>
+<h4>Perhatian</h4>
+<p>Jangan bingung dengan perintah <a href="delete.htm"><b>delete</b></a> yang menerima nomor breakpoint bukan lokasi.</p>
+<p></p>
+<h4>Keterangan</h4>
+<p>Gunakan perintah <a href="enable.htm"><b>enable</b></a> untuk mengaktifkan breakpoint, <a href="disable.htm"><b>disable</b></a> untuk menonaktifkannya, atau <b>info breakpoints</b> untuk menampilkan informasi tentang breakpoints.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Pada contoh ini, kita akan mengatur breakpoint di dalam sebuah loop dan kemudian menonaktifkannya setelah mencapainya.</p>
+<pre><div class="code">
+(gdb) <b>break 6</b>     
+Breakpoint 1 at 0x80483f7: file test.cpp, line 6.     
+(gdb) <b>run</b>     
+Starting program: /home/testuser/test      
+     
+Breakpoint 1, main () at test.cpp:6     
+6         printf("%di);     
+(gdb) <b>clear 6</b>     
+Deleted breakpoint 1      
+(gdb) <b>continue</b>     
+Continuing.     
+0     
+1     
+2     
+3     
+4     
+[Inferior 1 (process 26660) exited normally]     
+     
+</div></pre>
+<h4>Kesalahan Umum</h4>
+<p>Jika secara tidak sengaja menggunakan perintah <a href="delete.htm"><b>delete</b></a> alih-alih perintah <b>clear</b>, argumen akan diinterpretasikan sebagai nomor breakpoint bukan nomor baris. Hal ini dapat mengakibatkan penghapusan breakpoint yang berbeda dari yang diharapkan atau gagal dengan pesan kesalahan:</p>
+<pre><div class="code">
+(gdb) <b>break 6</b>     
+Breakpoint 1 at 0x80483f7: file test.cpp, line 6.     
+(gdb) <b>delete 6</b>     
+No breakpoint number 6.     
+(gdb) <b>clear 6</b>     
+Deleted breakpoint 1      
+</div></pre>
+<p></p>
+
+
+
+
+
+	
+
+</div></div></div></div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info types</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info types</h2>
+                    <p>Menampilkan daftar tipe yang didefinisikan dalam modul yang saat ini dimuat</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> types<br/>
+                        <b>info</b> types [<i>Regex</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Regex</dt>
+                        <dd>Jika spesifik, perintah <b>info types</b> akan menampilkan daftar tipe yang cocok dengan regex tersebut. Jika tidak disebutkan, perintah akan menampilkan semua tipe dalam semua modul yang dimuat (program utama dan pustaka bersama).</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Simbol hanya akan berisi tipe-tipe yang digunakan oleh program. Tipe-tipe yang dideklarasikan tetapi tidak dirujuk oleh kode mana pun tidak akan disertakan.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan penggunaan perintah <b>info types</b> dengan program C++ dasar:</p>
+                    <pre>
+                        <code>
+class TestClass
+{
+public:
+    class NestedClass
+    {
+    public:
+        int DummyField;
+    };
+};
+
+typedef int UnusedType, UsedType;
+
+int main(int argc, char **argv)
+{
+    UsedType xxx;
+    TestClass::NestedClass yyy;
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Catatan bahwa typedef <b>UnusedType</b> dikecualikan dari output perintah <b>info types</b> karena tidak dirujuk di mana pun dalam kode:</p>
+                    <pre>
+                        <code>
+(gdb) info types
+All defined types:
+
+File test.cpp:
+TestClass;
+TestClass::NestedClass;
+typedef int UsedType;
+typedef char;
+typedef int;
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info source</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info source</h2>
+                    <p>Menampilkan informasi tentang file sumber saat ini</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> source<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Jika Anda ingin melihat daftar semua file sumber daripada informasi tentang file sumber saat ini, gunakan perintah <b>info sources</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Berikut adalah contoh keluaran dari perintah <b>info source</b>:</p>
+                    <pre>
+                        <code>
+(gdb) start
+Temporary breakpoint 1 at 0x80486b6: file test.cpp, line 5.
+Starting program: /home/bazis/test
+
+Temporary breakpoint 1, main (argc=1, argv=0xbffff064) at test.cpp:5
+5               std::cout &lt;&lt; "Hello!" &lt;&lt; std::endl;
+(gdb) info source
+Current source file is test.cpp
+Compilation directory is /home/bazis
+Located in /home/bazis/test.cpp
+Contains 7 lines.
+Source language is c++.
+Compiled with DWARF 2 debugging format.
+Does not include preprocessor macro info.
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

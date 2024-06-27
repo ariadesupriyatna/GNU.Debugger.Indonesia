@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah set args</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah set args</h2>
+                    <p> Menetapkan argumen default untuk program yang sedang di-debug.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>set</b> args [<i>Argumen</i>]<br/>
+                        <b>show</b> args<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Argumen</dt>
+                        <dd>Menentukan argumen baris perintah default yang akan diteruskan ke program.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Argumen yang ditentukan dengan <b>set args</b> akan digunakan jika Anda memulai program dengan perintah <a href="run.htm" tppabs="http://visualgdb.com/gdbreference/commands/run"><b>run</b></a>.</p>
+                    <p>Jika Anda memberikan argumen dengan perintah <a href="run.htm" tppabs="http://visualgdb.com/gdbreference/commands/run"><b>run</b></a>, argumen yang ditetapkan dengan <b>set args</b> tidak akan digunakan.</p>
+                    <p></p>
+
+                    <h4>Restrictions</h4>
+                    <p>Jika Anda menetapkan argumen menggunakan perintah <b>set args</b> setelah program dimulai, argumen tersebut tidak akan berlaku sampai Anda me-restart program tersebut.</p>
+                    <p>Perintah <b>set args</b> tidak berlaku saat melampirkan (attach) ke proses dengan <a href="attach.htm" tppabs="http://visualgdb.com/gdbreference/commands/attach"><b>attach</b></a>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan menjalankan program C++ berikut:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+    for(int i = 1; i < argc; i++)
+        printf("Argumen %d: %s\n", i, argv[i]);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Kita akan menetapkan argumen default, memulai program, dan mengamati keluarannya:</p>
+                    <pre>
+                        <code>
+(gdb) <b>b main</b>
+Breakpoint 1 at 0x401395: file 0.cpp, line 4.
+(gdb) <b>set args "Hello, World" Test</b>
+(gdb) <b>run</b>
+Starting program: c:"Hello, World" Test
+[New Thread 704.0x418]
+
+Breakpoint 1, main (argc=3, argv=0x3e3f68) at 0.cpp:4
+4       {
+(gdb) <b>show args</b>
+Argument list to give program being debugged when it is started is ""Hello, World" Test".
+(gdb) <b>continue</b>
+Continuing.
+Argument 1: Hello, World
+Argument 2: Test
+[Inferior 1 (process 704) exited normally]
+(gdb)
+                        </code>
+                    </pre>
+
+                    <h4>Kesalahan Umum</h4>
+                    <p>Menetapkan argumen setelah Anda memulai program tidak akan berlaku sampai Anda me-restart program:</p>
+                    <pre>
+                        <code>
+(gdb) <b>set args Test1</b>
+(gdb) <b>b main</b>
+Breakpoint 1 at 0x401395: file 0.cpp, line 4.
+(gdb) <b>run</b>
+Starting program: c:Test1
+[New Thread 1992.0x9c0]
+Breakpoint 1, main (argc=2, argv=0x3e3f38) at 0.cpp:4
+4       {
+(gdb) <b>print *argv@argc</b>
+$1 = {0x3e3ec5 "c:\mingw\bin\0.exe", 0x3e3ed9 "Test1"}
+(gdb) <b>set args Test2</b>
+(gdb) <b>print *argv@argc</b>
+$2 = {0x3e3ec5 "c:\mingw\bin\0.exe", 0x3e3ed9 "Test1"}
+(gdb) <b>run</b>
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: c:Test2
+[New Thread 828.0x62c]
+Breakpoint 1, main (argc=2, argv=0x3e3f38) at 0.cpp:4
+4       {
+(gdb) <b>print *argv@argc</b>
+$3 = {0x3e3ec5 "c:\mingw\bin\0.exe", 0x3e3ed9 "Test2"}
+(gdb)
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

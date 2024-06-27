@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah disassemble</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet" />
+    <link href="../css/styles.css" rel="stylesheet" />
+    <link href="../css/highlight.pack.css" rel="stylesheet" />
+    <script src="../js/highlight.pack.js"></script>
+    <script>
+        hljs.configure({ tabReplace: '    ' });
+        hljs.initHighlightingOnLoad();
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah disassemble</h2>
+                    <p> Memecah sebuah fungsi atau fragmen fungsi yang ditentukan.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>disassemble</b><br />
+                        <b>disassemble</b> [<i>Fungsi</i>]<br />
+                        <b>disassemble</b> [<i>Alamat</i>]<br />
+                        <b>disassemble</b> [<i>Mulai</i>],[<i>Akhir</i>]<br />
+                        <b>disassemble</b> [<i>Fungsi</i>],+[<i>Panjang</i>]<br />
+                        <b>disassemble</b> [<i>Alamat</i>],+[<i>Panjang</i>]<br />
+                        <b>disassemble</b> /m [<i>...</i>]<br />
+                        <b>disassemble</b> /r [<i>...</i>]<br />
+                    </div>
+                    <p></p>
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Fungsi</dt>
+                        <dd>Menentukan fungsi yang akan dipecah. Jika ditentukan, perintah <b>disassemble</b> akan menghasilkan output pemecahan seluruh fungsi.</dd>
+                        <dt>Alamat</dt>
+                        <dd>Menentukan alamat di dalam fungsi yang akan dipecah. Perhatikan bahwa ketika hanya satu alamat ditentukan, perintah ini akan memecah seluruh fungsi yang mencakup alamat yang diberikan, termasuk instruksi di atasnya.</dd>
+                        <dt>Mulai/Akhir</dt>
+                        <dd>Menentukan alamat awal dan akhir untuk dipecah. Jika formulir ini digunakan, perintah tidak akan memecah seluruh fungsi, tetapi hanya instruksi di antara alamat awal dan akhir.</dd>
+                        <dt>Panjang</dt>
+                        <dd>Menentukan jumlah byte yang akan dipecah dimulai dari alamat atau fungsi yang diberikan.</dd>
+                        <dt>/m</dt>
+                        <dd>Ketika opsi ini ditentukan, perintah <b>disassemble</b> akan menunjukkan baris sumber yang sesuai dengan instruksi-instruksi yang dipecah.</dd>
+                        <dt>/r</dt>
+                        <dd>Ketika opsi ini ditentukan, perintah <b>disassemble</b> akan menunjukkan nilai byte mentah dari semua instruksi yang dipecah.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Default gaya pemecahan yang digunakan oleh GDB adalah gaya AT&T (mis. <b>mov 0xc(%ebp),%eax</b>) yang dapat membingungkan pengguna Windows. Untuk beralih ke gaya pemecahan Intel (mis. <b>mov eax, DWORD PTR [ebp+0xc]</b>) gunakan perintah <b>set disassembly-flavor</b>.</p>
+                    <p>Catatan bahwa perintah <b>disassemble</b> hanya berfungsi untuk kode di dalam fungsi. Jika Anda ingin memecah memori di luar fungsi yang diketahui, gunakan varian x/i dari perintah <a href="x.htm" tppabs="http://visualgdb.com/gdbreference/commands/x"><b>x</b></a>.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan beberapa contoh perintah <b>disassemble</b> berdasarkan contoh berikut:</p>
+                    <pre>
+                        <div class="code">
+                            <span class="keyword">int</span> func(<span class="keyword">int</span> a, <span class="keyword">int</span> b)
+                            {
+                                <span class="keyword">return</span> a + b;
+                            }
+
+                            <span class="keyword">int</span> main()
+                            {
+                                <span class="keyword">return</span> func(1, 2);
+                            }
+                        </div>
+                    </pre>
+                    <p>Kami akan mengompilasi file ini tanpa optimasi dan menjalankan beberapa varian dari perintah <b>disassemble</b> untuk menampilkan isi kedua fungsi.</p>
+                    <pre>
+                        <div class="code">
+                            (gdb) <b>break main</b>
+                            Breakpoint 1 at 0x8048400: file test.c, line 8.
+                            (gdb) <b>run</b>
+                            Starting program: /home/bazis/test
+
+                            Breakpoint 1, main () at test.c:8
+                            8         return func(1, 2);
+                            (gdb) <b>disassemble</b>
+                            Dump of assembler code for function main:
+                            0x080483fa &lt;+0&gt;:     push   %ebp
+                            0x080483fb &lt;+1&gt;:     mov    %esp,%ebp
+                            0x080483fd &lt;+3&gt;:     sub    $0x8,%esp
+                            =&gt; 0x08048400 &lt;+6&gt;:     movl   $0x2,0x4(%esp)
+                            0x08048408 &lt;+14&gt;:    movl   $0x1,(%esp)
+                            0x0804840f &lt;+21&gt;:    call   0x80483ed &lt;func&gt;
+                            0x08048414 &lt;+26&gt;:    leave
+                            0x08048415 &lt;+27&gt;:    ret
+                            End of assembler dump.
+                            (gdb) <b>disassemble func</b>
+                            Dump of assembler code for function func:
+                            0x080483ed &lt;+0&gt;:     push   %ebp
+                            0x080483ee &lt;+1&gt;:     mov    %esp,%ebp
+                            0x080483f0 &lt;+3&gt;:     mov    0xc(%ebp),%eax
+                            0x080483f3 &lt;+6&gt;:     mov    0x8(%ebp),%edx
+                            0x080483f6 &lt;+9&gt;:     add    %edx,%eax
+                            0x080483f8 &lt;+11&gt;:    pop    %ebp
+                            0x080483f9 &lt;+12&gt;:    ret
+                            End of assembler dump.
+                            (gdb) <b>disassemble func,+6</b>
+                            Dump of assembler code from 0x80483ed to 0x80483f3:
+                            0x080483ed &lt;func+0&gt;: push   %ebp
+                            0x080483ee &lt;func+1&gt;: mov    %esp,%ebp
+                            0x080483f0 &lt;func+3&gt;: mov    0xc(%ebp),%eax
+                            End of assembler dump.
+                            (gdb) <b>disassemble func+3,func+7</b>
+                            Dump of assembler code from 0x80483f0 to 0x80483f4:
+                            0x080483f0 &lt;func+3&gt;: mov    0xc(%ebp),%eax
+                            0x080483f3 &lt;func+6&gt;: mov    0x8(%ebp),%edx
+                            End of assembler dump.
+                            (gdb) <b>disassemble 0x80483f0</b>
+                            Dump of assembler code for function func:
+                            0x080483ed &lt;+0&gt;:     push   %ebp
+                            0x080483ee &lt;+1&gt;:     mov    %esp,%ebp
+                            0x080483f0 &lt;+3&gt;:     mov    0xc(%ebp),%eax
+                            0x080483f3 &lt;+6&gt;:     mov    0x8(%ebp),%edx
+                            0x080483f6 &lt;+9&gt;:     add    %edx,%eax
+                            0x080483f8 &lt;+11&gt;:    pop    %ebp
+                            0x080483f9 &lt;+12&gt;:    ret
+                            End of assembler dump.
+                            (gdb) <b>disassemble /m func</b>
+                            Dump of assembler code for function func:
+                            2       {
+                            0x080483ed &lt;+0&gt;:     push   %ebp
+                            0x080483ee &lt;+1&gt;:     mov    %esp,%ebp
+
+                            3         return a + b;
+                            0x080483f0 &lt;+3&gt;:     mov    0xc(%ebp),%eax
+                            0x080483f3 &lt;+6&gt;:     mov    0x8(%ebp),%edx
+                            0x080483f6 &lt;+9&gt;:     add    %edx,%eax
+
+                            4       }
+                            0x080483f8 &lt;+11&gt;:    pop    %ebp
+                            0x080483f9 &lt;+12&gt;:    ret
+
+                            End of assembler dump.
+                            (gdb) <b>disassemble /r func</b>
+                            Dump of assembler code for function func:
+                            0x080483ed &lt;+0&gt;:     55      push   %ebp
+                            0x080483ee &lt;+1&gt;:     89 e5   mov    %esp,%ebp
+                            0x080483f0 &lt;+3&gt;:     8b 45 0c        mov    0xc(%ebp),%eax
+                            0x080483f3 &lt;+6&gt;:     8b 55 08        mov    0x8(%ebp),%edx
+                            0x080483f6 &lt;+9&gt;:     01 d0   add    %edx,%eax
+                            0x080483f8 &lt;+11&gt;:    5d      pop    %ebp
+                            0x080483f9 &lt;+12&gt;:    c3      ret
+                            End of assembler dump.
+                        </div>
+                    </pre>
+                    <p></p>
+                    <h4>Error Umum</h4>
+                    <p>Jika Anda mencoba menggunakan perintah <b>disassemble</b> untuk memecah kode di luar fungsi yang diketahui, itu akan gagal. Sebagai gantinya, gunakan perintah x/i. Berikut ini contoh memecah buffer yang berisi salinan fungsi:</p>
+                    <pre>
+                        <div class="code">
+                            (gdb) <b>start</b>
+                            Temporary breakpoint 1 at 0x8048463: file test2.c, line 8.
+                            Starting program: /home/bazis/test2
+
+                            Temporary breakpoint 1, main () at test2.c:8
+                            8               void *pCopyOfFunction = malloc(512);
+                            (gdb) <b>next</b>
+                            9               memcpy(pCopyOfFunction, func, 512);
+                            (gdb) <b>next</b>
+                            10        return func(1, 2);
+                            (gdb) <b>disassemble pCopyOfFunction</b>
+                            No function contains specified address.
+                            (gdb) <b>x/5i pCopyOfFunction</b>
+                               0x804b008:   push   %ebp
+                               0x804b009:   mov    %esp,%ebp
+                               0x804b00b:   mov    0xc(%ebp),%eax
+                               0x804b00e:   mov    0x8(%ebp),%edx
+                               0x804b011:   add    %edx,%eax
+                        </div>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

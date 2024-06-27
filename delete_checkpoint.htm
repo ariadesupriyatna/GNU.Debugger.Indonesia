@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - Perintah delete checkpoint</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah delete checkpoint</h2>
+<p>Menghapus checkpoint yang telah dibuat sebelumnya</p>
+
+<h4>Syntax</h4>
+<div class="syntax">
+<b>delete</b> checkpoint [<i>Nomor Checkpoint</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Nomor Checkpoint</dt>
+<dd>Menentukan nomor dari checkpoint yang dibuat sebelumnya menggunakan perintah <a href="checkpoint.htm" tppabs="http://visualgdb.com/gdbreference/commands/checkpoint"><b>checkpoint</b></a>.</dd>
+</dl>
+<p></p>
+<h4>Catatan</h4>
+<p>Silakan lihat deskripsi perintah <a href="checkpoint.htm" tppabs="http://visualgdb.com/gdbreference/commands/checkpoint"><b>checkpoint</b></a> untuk gambaran umum tentang checkpoint.</p>
+<p>Catatan bahwa Anda tidak dapat menghapus checkpoint yang sedang dipilih kecuali Anda beralih ke checkpoint lain menggunakan perintah <a href="restart.htm" tppabs="http://visualgdb.com/gdbreference/commands/restart"><b>restart</b></a>.</p>
+<p>Catatan bahwa GDB tidak akan menggunakan kembali nomor checkpoint setelah dihapus menggunakan perintah ini kecuali Anda menghapus semua checkpoint.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Kami akan menunjukkan penggunaan perintah <b>delete checkpoint</b> menggunakan program C dasar yang terdiri dari beberapa printf() :</p>
+<pre><div class="code">
+<span class="keyword">#include</span><span class="string">&nbsp;&lt;stdio.h&gt;</span>     
+     
+<span class="keyword">int</span>&nbsp;main(<span class="keyword">int</span>&nbsp;argc,&nbsp;<span class="keyword">char</span>&nbsp;**argv)     
+{     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Line&nbsp;1\n"</span>);     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Line&nbsp;2\n"</span>);     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Line&nbsp;3\n"</span>);     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Line&nbsp;4\n"</span>);     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Line&nbsp;5\n"</span>);     
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;0;     
+}     
+</div></pre>
+<p>Kami akan membuat beberapa checkpoint saat eksekusi program melewati baris berbeda dan kemudian menggunakan perintah <b>delete checkpoint</b> untuk menghapus beberapa di antaranya:</p>
+<pre><div class="code">
+(gdb) <b>start</b>     
+Temporary breakpoint 1 at 0x8048426: file test.cpp, line 5.     
+Starting program: /home/bazis/test      
+     
+Temporary breakpoint 1, main (argc=1, argv=0xbffff064) at test.cpp:5     
+5               printf("Line 1\n");     
+(gdb) <b>next</b>     
+Line 1     
+6               printf("Line 2\n");     
+(gdb) <b>checkpoint</b>     
+checkpoint: fork returned pid 2175.     
+(gdb) <b>next</b>     
+Line 2     
+7               printf("Line 3\n");     
+(gdb) <b>checkpoint</b>     
+checkpoint: fork returned pid 2176.     
+(gdb) <b>next</b>     
+Line 3     
+8               printf("Line 4\n");     
+(gdb) <b>checkpoint</b>     
+checkpoint: fork returned pid 2177.     
+(gdb) <b>info checkpoints</b>     
+  3 process 2177 at 0x804844a, file test.cpp, line 8     
+  2 process 2176 at 0x804843e, file test.cpp, line 7     
+  1 process 2175 at 0x8048432, file test.cpp, line 6     
+* 0 process 2171 (main process) at 0x804844a, file test.cpp, line 8     
+(gdb) <b>delete checkpoint 2</b>     
+Killed process 2176     
+(gdb) <b>next</b>     
+Line 4     
+9               printf("Line 5\n");     
+(gdb) <b>checkpoint</b>     
+checkpoint: fork returned pid 2178.     
+(gdb) <b>info checkpoints</b>     
+  4 process 2178 at 0x8048456, file test.cpp, line 9     
+  3 process 2177 at 0x804844a, file test.cpp, line 8     
+  1 process 2175 at 0x8048432, file test.cpp, line 6     
+* 0 process 2171 (main process) at 0x8048456, file test.cpp, line 9     
+(gdb) <b>restart 1</b>     
+Switching to process 2175     
+#0  main (argc=1, argv=0xbffff064) at test.cpp:6     
+6               printf("Line 2\n");     
+(gdb) <b>next</b>     
+Line 2     
+7               printf("Line 3\n");     
+(gdb) <b>info checkpoints</b>     
+  4 process 2178 at 0x8048456, file test.cpp, line 9     
+  3 process 2177 at 0x804844a, file test.cpp, line 8     
+* 1 process 2175 at 0x804843e, file test.cpp, line 7     
+  0 process 2171 (main process) at 0x8048456, file test.cpp, line 9     
+</div></pre>
+<p></p>
+</div></div></div></div>
+</body>
+</html>

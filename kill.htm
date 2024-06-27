@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - Perintah kill</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah kill</h2>
+<p>Menghentikan paksa proses yang sedang di-debug</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>kill</b><br/>
+</div>
+<p></p>
+<h4>Contoh</h4>
+<p>Pada contoh berikut, kita melekatkan GDB pada proses Linux yang sedang berjalan dan menghentikannya menggunakan GDB:</p>
+<pre><div class="code">
+(gdb) <b>attach 14199</b>     
+Melekatkan ke proses 14199     
+Membaca simbol dari /home/testuser/0.elf...selesai.     
+Membaca simbol dari /lib/i386-linux-gnu/libc.so.6...Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/libc-2.15.so...selesai.     
+selesai.     
+Simbol dimuat untuk /lib/i386-linux-gnu/libc.so.6     
+Membaca simbol dari /lib/ld-linux.so.2...Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/ld-2.15.so...selesai.     
+selesai.     
+Simbol dimuat untuk /lib/ld-linux.so.2     
+0xb771f424 di __kernel_vsyscall ()     
+(gdb) <b>kill</b>     
+Hentikan program yang sedang di-debug? (y atau n) y     
+(gdb)     
+</div></pre>
+<p></p>
+
+</div></div></div></div>
+</body>
+
+</html>

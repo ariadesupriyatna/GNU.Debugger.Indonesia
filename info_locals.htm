@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info locals</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info locals</h2>
+                    <p>Menampilkan informasi tentang variabel lokal yang sesuai dengan frame stack saat ini.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> locals<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perintah <b>info locals</b> menampilkan nilai variabel lokal dalam frame saat ini. Anda dapat memilih frame menggunakan perintah <a href="frame.htm">frame</a>, <a href="up.htm">up</a>, dan <a href="down.htm">down</a>.</p>
+                    <p>Perhatikan bahwa perintah <b>info locals</b> tidak menampilkan informasi tentang argumen fungsi. Gunakan perintah <b>info args</b> untuk menampilkan daftar argumen fungsi.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Untuk mendemonstrasikan perintah <b>info locals</b>, kita akan debug program contoh berikut:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+void func(int arg)
+{
+    printf("func(%d)\n", arg);
+}
+
+int main(int argc, char *argv[])
+{
+    int localVar1 = 1, localVar2 = 2;
+    func(localVar1 + localVar2);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Kita akan menjalankan program, menetapkan breakpoint di <b>func()</b> dan menggunakan perintah <b>info locals</b> untuk menampilkan variabel lokal di <b>main()</b>:</p>
+                    <pre>
+                        <code>
+(gdb) b func
+Breakpoint 1 at 0x80483ea: file test.cpp, line 5.
+(gdb) r
+Starting program: /home/testuser/test
+
+Breakpoint 1, func (arg=3) at test.cpp:5
+5  printf("func(%d)\n", arg);
+(gdb) backtrace
+#0  func (arg=3) at test.cpp:5
+#1  0x0804842a in main (argc=1, argv=0xbffff784) at test.cpp:11
+(gdb) info locals
+No locals.
+(gdb) up
+#1  0x0804842a in main (argc=1, argv=0xbffff784) at test.cpp:11
+11  func(localVar1 + localVar2);
+(gdb) info locals
+localVar1 = 1
+localVar2 = 2
+(gdb) down
+#0  func (arg=3) at test.cpp:5
+5  printf("func(%d)\n", arg);
+(gdb) info args
+arg = 3
+(gdb)
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

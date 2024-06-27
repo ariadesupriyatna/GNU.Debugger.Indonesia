@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah up</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah up</h2>
+<p> Memilih bingkai tumpukan sebelumnya (luar) atau salah satu bingkai yang mendahuluinya.</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>up</b><br/>
+<b>up</b> [<i>Jumlah bingkai</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Jumlah bingkai</dt>
+<dd>Jika parameter ini diberikan, perintah <b>up</b> akan naik N bingkai di mana N adalah jumlah yang ditentukan di sini. Jika parameter ini tidak ada, perintah <b>up</b> akan naik satu bingkai.</dd>
+</dl>
+<p></p>
+<h4>Catatan</h4>
+<p>Gunakan perintah <a href="backtrace.htm"><b>backtrace</b></a> untuk menampilkan semua bingkai yang tersedia. Gunakan perintah <a href="frame.htm"><b>frame</b></a> untuk memilih bingkai berdasarkan nomor.</p>
+<p>Catatan bahwa bingkai yang saat ini dipilih memengaruhi keluaran dari perintah <b>info args</b>, <b>info locals</b> dan <b>info frame</b>.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Kami akan mengilustrasikan penggunaan perintah <b>up</b> menggunakan fungsi rekursif di bawah ini:</p>
+<pre><div class="code">
+#include <stdio.h>
+
+void level0()
+{
+    printf("Tercapai level 0\n");
+}
+
+void test(int level)
+{
+    if (level > 0)
+    {
+        int prevLevel = level - 1;
+        printf("Level %d\n", level);
+        test(prevLevel);
+    }
+    else
+        level0();
+}
+
+int main()
+{
+    test(5);
+    return 0;
+}
+</div></pre>
+<p>Kami akan menetapkan breakpoint di fungsi <b>level0()</b> dan menggunakan perintah <b>up</b> untuk menavigasi jejak tumpukan ke atas.</p>
+<pre><div class="code">
+(gdb) <b>b level0</b>
+Breakpoint 1 di 0x804841a: file recursion.cpp, line 5.
+(gdb) <b>r</b>
+Starting program: /home/testuser/recursionDemo
+Level 5
+Level 4
+Level 3
+Level 2
+Level 1
+
+Breakpoint 1, level0 () at recursion.cpp:5
+5  printf("Tercapai level 0\n");
+(gdb) <b>frame</b>
+#0  level0 () at recursion.cpp:5
+5  printf("Tercapai level 0\n");
+(gdb) <b>up</b>
+#1  0x08048462 di test (level=0) di recursion.cpp:17
+17   level0();
+(gdb) <b>up</b>
+#2  0x0804845b di test (level=1) di recursion.cpp:14
+14   test(prevLevel);
+(gdb) <b>up 3</b>
+#5  0x0804845b di test (level=4) di recursion.cpp:14
+14   test(prevLevel);
+(gdb) <b>print prevLevel</b>
+$1 = 3
+(gdb) <b>up</b>
+#6  0x0804845b di test (level=5) di recursion.cpp:14
+14   test(prevLevel);
+(gdb) <b>print prevLevel</b>
+$2 = 4
+(gdb) <b>up</b>
+#7  0x08048479 di main () di recursion.cpp:22
+22  test(5);
+(gdb) <b>up</b>
+Bingkai awal dipilih; Anda tidak dapat naik lebih tinggi.
+(gdb) <b></b>
+</div></pre>
+<p></p>
+
+</div></div></div></div>
+</body>
+</html>

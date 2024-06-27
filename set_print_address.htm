@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set print address</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set print address</h2>
+                    <p>Menentukan apakah GDB akan mencetak alamat saat mengevaluasi pointer.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> print address <b>on</b><br/>
+                        <b>set</b> print address <b>off</b><br/>
+                        <b>show</b> print address<br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>on</b></dt>
+                        <dd>Saat mencetak nilai dari pointer, GDB akan mencetak alamat mentah bersama dengan informasi lainnya (contoh: $1 = 0xbffff232 "Hello, World").</dd>
+                        <dt><b>off</b></dt>
+                        <dd>Saat mencetak nilai dari pointer, GDB akan menyembunyikan alamat mentah dari output (contoh: $1 = "Hello, World").</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>print address</b> adalah 'on'.</p>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Perhatikan bahwa jika pencetakan alamat dinonaktifkan, nilai-nilai pointer tidak akan ditampilkan bahkan jika nilai pointer adalah bagian yang bermakna dari output. Oleh karena itu, mengevaluasi banyak jenis pointer (misalnya <b>int *</b>) akan menghasilkan hasil yang tidak bermakna (contoh: $1 = (int *) ).</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Berikut adalah log sesi GDB contoh yang mengilustrasikan bagaimana perintah <b>set print address</b> mempengaruhi output dari perintah <a href="print.htm"><b>print</b></a>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>start</b>
+Breakpoint 1 at 0x80483f0: file test.cpp, line 5.
+Starting program: /home/bazis/test
+
+Breakpoint 1, main (argc=1, argv=0xbffff064) at test.cpp:5
+5               return 0;
+(gdb) <b>print argc</b>
+$1 = 1
+(gdb) <b>print argv</b>
+$2 = (char **) 0xbffff064
+(gdb) <b>print argv[0]</b>
+$3 = 0xbffff232 "/home/bazis/test"
+(gdb) <b>print &argc</b>
+$4 = (int *) 0xbfffefd0
+(gdb) <b>show print address</b>
+Pencetakan alamat sedang aktif.
+(gdb) <b>set print address off</b>
+(gdb) <b>print argc</b>
+$5 = 1
+(gdb) <b>print argv</b>
+$6 = (char **)
+(gdb) <b>print argv[0]</b>
+$7 = "/home/bazis/test"
+(gdb) <b>print &argc</b>
+$8 = (int *)
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

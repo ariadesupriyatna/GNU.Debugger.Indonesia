@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah start</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah start</h2>
+<p>Menetapkan breakpoint sementara di <b>main()</b> dan mulai mengeksekusi program di bawah GDB.</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>start</b><br/>
+<b>start</b> [<i>Argumen</i>]<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Argumen</dt>
+<dd>Menentukan argumen baris perintah yang diteruskan ke program melalui parameter <b>argv</b> dan <b>argc</b>.</dd>
+</dl>
+<p></p>
+<h4>Pembatasan</h4>
+<p>Perintah <b>start</b> sebaiknya hanya digunakan jika Anda ingin mendebag instance baru dari program. Gunakan perintah <a href="continue.htm"><b>continue</b></a> jika:</p>
+<ul>
+<li> Untuk melanjutkan proses setelah terpasang dengan perintah <a href="attach.htm"><b>attach</b></a></li>
+<li> Untuk memulai debugging dengan gdbserver</li>
+<li> Untuk melanjutkan dari breakpoint</li>
+</ul>
+<p>Jika Anda menjalankan perintah <b>start</b> setelah breakpoint terkena, program Anda akan dijalankan ulang dari awal.</p>
+<p></p>
+<h4>Catatan</h4>
+<p>Untuk program C/C++, perintah <b>start</b> setara dengan urutan perintah berikut:</p>
+<pre><div class="code">
+tbreak main     
+run     
+</div></pre>
+<p></p>
+<h4>Contoh</h4>
+<p>Perintah-perintah berikut memulai mengeksekusi program dengan meneruskan "Hello World" sebagai argumen:</p>
+<pre><div class="code">
+(gdb) <b>start "Hello World"</b>     
+Breakpoint sementara 1 di 0x80483b7: file 0.cpp, line 3.     
+Memulai program: /home/testuser/0.elf "Hello World"     
+     
+Breakpoint sementara 1, main (argc=2, argv=0xbffff774) di 0.cpp:33 return 0;     
+(gdb) <b>print *argv@argc</b>     
+$1 = {0xbffff895 "/home/testuser/0.elf", 0xbffff8aa "Hello World"}     
+</div></pre>
+<p></p>
+<p>Contoh ini menunjukkan bahwa perintah start yang diberikan setelah melampirkan ke proses akan memulai ulang proses:</p>
+<pre><div class="code">
+(gdb) <b>attach 28325</b>     
+Melampirkan ke program: /home/testuser/0.elf, proses 28325     
+Membaca simbol dari /lib/i386-linux-gnu/libc.so.6...     
+selesai.     
+Simbol dimuat untuk /lib/i386-linux-gnu/libc.so.6     
+0xb7768424 di __kernel_vsyscall ()     
+(gdb) <b>start</b>     
+Program yang sedang didebug telah dimulai sebelumnya.     
+Mulai dari awal? (y atau n) y     
+Breakpoint sementara 1 di 0x8048444: file 0.cpp, line 3.     
+Memulai program: /home/testuser/0.elf      
+Breakpoint sementara 1, main (argc=1, argv=0xbffff844) di 0.cpp:3     
+3 {     
+     
+</div></pre>
+<h4>Kesalahan Umum</h4>
+<p>Menggunakan perintah <b>start</b> untuk memulai debugging dengan gdbserver akan menghasilkan kesalahan. Gunakan perintah <a href="continue.htm"><b>continue</b></a> sebagai gantinya:</p>
+<pre><div class="code">
+(gdb) <b>target remote :2001</b>     
+Debugging jarak jauh menggunakan :2001     
+Membaca simbol dari /lib/ld-linux.so.2...Membaca simbol dari /usr/lib/debug/lib/i386-linux-gnu/ld-2.15.so...selesai.     
+selesai.     
+Simbol dimuat untuk /lib/ld-linux.so.2     
+0xb7fdf1d0 di _start () dari /lib/ld-linux.so.2     
+(gdb) <b>start</b>     
+Target "remote" tidak mendukung "run".  Coba "help target" atau "continue".     
+(gdb) <b>b main</b>     
+Breakpoint 1 di 0x8048444: file 0.cpp, line 3.     
+(gdb) <b>continue</b>     
+Melanjutkan.     
+     
+Breakpoint 1, main (argc=1, argv=0xbffff7a4) di 0.cpp:3     
+3 {     
+</div></pre>
+<p></p>
+<p></p>
+
+
+
+
+
+	
+
+</div></div></div></div>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah set detach-on-fork</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah set detach-on-fork</h2>
+                    <p> Menentukan apakah GDB harus melakukan debugging pada proses induk dan anak setelah panggilan <b>fork()</b> atau <b>vfork()</b></p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>set</b> detach-on-fork <b>on</b><br/>
+                        <b>set</b> detach-on-fork <b>off</b><br/>
+                        <b>show</b> detach-on-fork<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt><b>on</b></dt>
+                        <dd>Dalam mode ini, GDB akan tetap terhubung ke proses induk atau anak (tergantung pada perintah <b>set follow-fork-mode</b>).</dd>
+                        <dt><b>off</b></dt>
+                        <dd>Dalam mode ini, GDB akan terhubung ke kedua proses setelah panggilan <b>fork()</b> atau <b>vfork()</b>. Gunakan perintah <b>info inferiors</b> untuk menampilkan detail dan perintah <b>inferior</b> untuk beralih di antara keduanya.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>detach-on-fork</b> adalah 'on'.</p>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Gunakan perintah <b>set follow-fork-mode</b> untuk mengontrol proses mana yang akan dipilih setelah GDB melanjutkan dari panggilan <b>fork()</b> atau <b>vfork()</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan melakukan debugging program C++ berikut:</p>
+                    <pre>
+                        <code>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+
+void func(int pid, int ret)
+{
+    printf("My PID is %d, fork() returned %d\n", pid, ret);
+
+    if (ret)
+        printf("Kami berada di proses induk\n");
+    else
+        printf("Kami berada di proses anak\n");
+}
+
+int main()
+{
+    int r = fork();
+    func(getpid(), r);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+
+                    <p>Jika kita debug program dengan pengaturan default untuk <b>detach-on-fork</b>, hanya satu dari kedua proses yang tetap di-debug (dan akan memicu breakpoint). Lihat deskripsi <b>set follow-fork-mode</b> untuk lebih banyak detail.</p>
+                    <p>Jika kita mengatur <b>detach-on-fork</b> ke <b>on</b>, GDB tidak akan melepaskan proses anak dan kita dapat beralih ke proses anak menggunakan perintah <b>inferior</b>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>start</b>
+Temporary breakpoint 1 at 0x804848f: file forktest.cpp, line 17.
+Starting program: /home/testuser/forktest
+
+Temporary breakpoint 1, main () at forktest.cpp:17
+17     int r = fork();
+(gdb) <b>show follow-fork-mode </b>
+Debugger response to a program call of fork or vfork is "parent".
+(gdb) <b>set detach-on-fork off</b>
+(gdb) <b>break func</b>
+Breakpoint 2 at 0x804844a: file forktest.cpp, line 7.
+(gdb) <b>continue</b>
+Continuing.
+[New process 8133]
+
+Breakpoint 2, func (pid=8125, ret=8133) at forktest.cpp:7
+7     printf("My PID is %d, fork() returned %d\n", pid, ret);
+(gdb) <b>continue</b>
+Continuing.
+My PID is 8125, fork() returned 8133
+Kami berada di proses induk
+[Inferior 1 (process 8125) exited normally]
+(gdb) <b>info inferiors</b>
+  Num  Description       Executable
+  2    process 8133      /home/testuser/forktest
+* 1    <null>            /home/testuser/forktest
+(gdb) <b>inferior 2</b>
+[Switching to inferior 2 [process 8133] (/home/testuser/forktest)]
+[Switching to thread 2 (process 8133)]
+#0  0xb7fdd424 in ?? ()
+(gdb) <b>bt</b>
+#0  0xb7fdd424 in ?? ()
+#1  0x08048494 in main () at forktest.cpp:17
+(gdb) <b>continue</b>
+Continuing.
+
+Breakpoint 2, func (pid=8133, ret=0) at forktest.cpp:7
+7     printf("My PID is %d, fork() returned %d\n", pid, ret);
+(gdb) <b>continue</b>
+Continuing.
+My PID is 8133, fork() returned 0
+Kami berada di proses anak
+[Inferior 2 (process 8133) exited normally]
+                        </code>
+                    </pre>
+                    <p></p>
+
+                    <p>Seperti yang diharapkan, GDB melanjutkan debugging pada proses induk. Proses anak tetap ditangguhkan sampai kita beralih ke proses anak menggunakan perintah <b>inferior</b> dan melanjutkannya dengan menggunakan perintah <a href="continue.htm" tppabs="http://visualgdb.com/gdbreference/commands/continue"><b>continue</b></a>.</p>
+                    <p></p>
+
+                    <p>Sekarang kita akan mengonfigurasi GDB untuk beralih ke proses anak:</p>
+                    <pre>
+                        <code>
+(gdb) <b>set detach-on-fork off</b>
+(gdb) <b>set follow-fork-mode child </b>
+(gdb) <b>break func</b>
+Breakpoint 1 at 0x804844a: file forktest.cpp, line 7.
+(gdb) <b>run</b>
+Starting program: /home/testuser/forktest
+[New process 8080]
+[Switching to process 8080]
+
+Breakpoint 1, func (pid=8080, ret=0) at forktest.cpp:7
+7     printf("My PID is %d, fork() returned %d\n", pid, ret);
+(gdb) <b>continue</b>
+Continuing.
+My PID is 8080, fork() returned 0
+Kami berada di proses anak
+[Inferior 2 (process 8080) exited normally]
+(gdb) <b>info inferiors</b>
+  Num  Description       Executable
+* 2    <null>            /home/testuser/forktest
+  1    process 8077      /home/testuser/forktest
+(gdb) <b>inferior 1</b>
+[Switching to inferior 1 [process 8077] (/home/testuser/forktest)]
+[Switching to thread 1 (process 8077)]
+#0  0xb7fdd424 in __kernel_vsyscall ()
+(gdb) <b>bt</b>
+#0  0xb7fdd424 in __kernel_vsyscall ()
+#1  0xb7ed4f7c in __libc_fork () at ../nptl/sysdeps/unix/sysv/linux/i386/../fork.c:131
+#2  0x08048494 in main () at forktest.cpp:17
+(gdb) <b>continue</b>
+Continuing.
+
+Breakpoint 1, func (pid=8077, ret=8080) at forktest.cpp:7
+7     printf("My PID is %d, fork() returned %d\n", pid, ret);
+(gdb) <b>continue</b>
+Continuing.
+My PID is 8077, fork() returned 8080
+Kami berada di proses induk
+[Inferior 1 (process 8077) exited normally]
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

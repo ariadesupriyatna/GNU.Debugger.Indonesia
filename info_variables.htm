@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah info variables</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info variables</h2>
+                    <p>Menampilkan daftar variabel global/statik yang ada dalam program yang sedang di-debug</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> variables<br/>
+                        <b>info</b> variables [<i>Regex</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Regex</dt>
+                        <dd>Jika spesifik, perintah <b>info variables</b> akan menampilkan daftar variabel global/statik yang cocok dengan regex tersebut. Jika tidak disebutkan, perintah akan menampilkan semua variabel global/statik dalam semua modul yang dimuat (program utama dan pustaka bersama).</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Berikut adalah penggunaan contoh dari perintah <b>info variables</b> untuk program yang sangat sederhana yang mengandung satu variabel global. Perhatikan bahwa banyak variabel (terdaftar di bawah "Non-debugging symbols") didefinisikan secara implisit oleh kompiler:</p>
+                    <pre>
+                        <code>
+(gdb) info variables
+All defined variables:
+
+File test.cpp:
+int g_GlobalVariable;
+
+Non-debugging symbols:
+0x08048528  _fp_hw
+0x0804852c  _IO_stdin_used
+0x08048650  __FRAME_END__
+0x08049f14  __CTOR_LIST__
+0x08049f14  __init_array_end
+0x08049f14  __init_array_start
+0x08049f18  __CTOR_END__
+0x08049f1c  __DTOR_LIST__
+0x08049f20  __DTOR_END__
+0x08049f24  __JCR_END__
+0x08049f24  __JCR_LIST__
+0x08049f28  _DYNAMIC
+0x08049ff4  _GLOBAL_OFFSET_TABLE_
+0x0804a00c  __data_start
+0x0804a00c  data_start
+0x0804a010  __dso_handle
+0x0804a014  completed.6159
+0x0804a018  dtor_idx.6161
+(gdb) info variables start
+All variables matching regular expression "start":
+
+Non-debugging symbols:
+0x08049f14  __init_array_start
+0x0804a00c  __data_start
+0x0804a00c  data_start
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

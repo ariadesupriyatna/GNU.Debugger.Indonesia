@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah set backtrace limit</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah set backtrace limit</h2>
+                    <p> Menetapkan jumlah maksimum frame yang ditampilkan oleh perintah backtrace.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>set</b> backtrace limit [<i>Jumlah frame</i>]<br/>
+                        <b>set</b> backtrace limit 0<br/>
+                        <b>show</b> backtrace limit<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Jumlah frame</dt>
+                        <dd>Menentukan jumlah maksimum frame yang ditampilkan oleh perintah <a href="backtrace.htm" tppabs="http://visualgdb.com/gdbreference/commands/backtrace"><b>backtrace</b></a>. Tentukan 0 untuk jumlah frame tanpa batas.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>backtrace limit</b> adalah <b>tanpa batas</b>.</p>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perhatikan bahwa bahkan jika Anda menentukan jumlah frame secara eksplisit saat memanggil perintah <a href="backtrace.htm" tppabs="http://visualgdb.com/gdbreference/commands/backtrace"><b>backtrace</b></a>, jumlah maksimum frame yang ditampilkan tidak akan melebihi batas yang ditetapkan oleh perintah ini.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan penggunaan perintah <b>set backtrace limit</b> dengan program rekursif sederhana:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+void level0()
+{
+    printf("Reached level 0\n");
+}
+
+void test(int level)
+{
+    if (level > 0)
+    {
+        int prevLevel = level - 1;
+        printf("Level %d\n", level);
+        test(prevLevel);
+    }
+    else
+        level0();
+}
+
+int main()
+{
+    test(5);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Pada contoh ini, main() memanggil test(5), test(5) memanggil test(4), dan seterusnya hingga test(0) memanggil level0(). Kami akan menempatkan breakpoint di level0() dan menunjukkan bagaimana perintah <b>set backtrace limit</b> memengaruhi output dari perintah <a href="backtrace.htm" tppabs="http://visualgdb.com/gdbreference/commands/backtrace"><b>backtrace</b></a>:</p>
+                    <pre>
+                        <code>
+(gdb) <b>break level0</b>
+Breakpoint 1 at 0x804841a: file recursion.cpp, line 5.
+(gdb) <b>run</b>
+Starting program: /home/testuser/recursion
+Level 5
+Level 4
+Level 3
+Level 2
+Level 1
+
+Breakpoint 1, level0 () at recursion.cpp:5
+5  printf("Reached level 0\n");
+(gdb) <b>backtrace</b>
+#0  level0 () at recursion.cpp:5
+#1  0x08048462 in test (level=0) at recursion.cpp:17
+#2  0x0804845b in test (level=1) at recursion.cpp:14
+#3  0x0804845b in test (level=2) at recursion.cpp:14
+#4  0x0804845b in test (level=3) at recursion.cpp:14
+#5  0x0804845b in test (level=4) at recursion.cpp:14
+#6  0x0804845b in test (level=5) at recursion.cpp:14
+#7  0x08048479 in main () at recursion.cpp:22
+(gdb) <b>show backtrace limit</b>
+An upper bound on the number of backtrace levels is unlimited.
+(gdb) <b>set backtrace limit 3</b>
+(gdb) <b>backtrace</b>
+#0  level0 () at recursion.cpp:5
+#1  0x08048462 in test (level=0) at recursion.cpp:17
+#2  0x0804845b in test (level=1) at recursion.cpp:14
+(gdb) <b>backtrace 5</b>
+#0  level0 () at recursion.cpp:5
+#1  0x08048462 in test (level=0) at recursion.cpp:17
+#2  0x0804845b in test (level=1) at recursion.cpp:14
+(gdb) <b>set backtrace limit 100</b>
+(gdb) <b>backtrace</b>
+#0  level0 () at recursion.cpp:5
+#1  0x08048462 in test (level=0) at recursion.cpp:17
+#2  0x0804845b in test (level=1) at recursion.cpp:14
+#3  0x0804845b in test (level=2) at recursion.cpp:14
+#4  0x0804845b in test (level=3) at recursion.cpp:14
+#5  0x0804845b in test (level=4) at recursion.cpp:14
+#6  0x0804845b in test (level=5) at recursion.cpp:14
+#7  0x08048479 in main () at recursion.cpp:22
+(gdb) <b>set backtrace limit 0</b>
+(gdb) <b>backtrace</b>
+#0  level0 () at recursion.cpp:5
+#1  0x08048462 in test (level=0) at recursion.cpp:17
+#2  0x0804845b in test (level=1) at recursion.cpp:14
+#3  0x0804845b in test (level=2) at recursion.cpp:14
+#4  0x0804845b in test (level=3) at recursion.cpp:14
+#5  0x0804845b in test (level=4) at recursion.cpp:14
+#6  0x0804845b in test (level=5) at recursion.cpp:14
+#7  0x08048479 in main () at recursion.cpp:22
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

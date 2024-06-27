@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah checkpoint</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah checkpoint</h2>
+<p>Membuat checkpoint baru</p>
+
+<h4>Syntax</h4>
+<div class="syntax">
+<b>checkpoint</b><br/>
+</div>
+<p></p>
+<h4>Keterangan</h4>
+<p>Checkpoint GDB adalah proses terpisah yang dibuat dengan menyalin keadaan proses yang sedang di-debug menggunakan fungsi <b>fork()</b>. Setelah dibuat, proses checkpoint akan tetap ditangguhkan sampai dipilih menggunakan perintah <a href="restart.htm"><b>restart</b></a>. Anda dapat kembali ke proses utama dengan menjalankan perintah <a href="restart.htm"><b>restart</b></a> dengan nomor checkpoint 0.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Kami akan mendemonstrasikan penggunaan perintah <b>checkpoint</b> menggunakan program C++ dasar yang mengiterasi dari 0 hingga 9 dan menampilkan pesan di setiap iterasi:</p>
+<p></p>
+<pre><div class="code">
+<span class="keyword">#include</span><span class="string">&nbsp;&lt;stdio.h&gt;</span>     
+     
+<span class="keyword">int</span>&nbsp;main(<span class="keyword">int</span>&nbsp;argc,&nbsp;<span class="keyword">char</span>&nbsp;**argv)     
+{     
+&nbsp;&nbsp;<span class="keyword">for</span>(<span class="keyword">int</span>&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;argc;&nbsp;i++)     
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Arg&nbsp;%d:&nbsp;%s\n"</span>,&nbsp;i,&nbsp;argv[i]);     
+&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;0;     
+}     
+</div></pre>
+<p>Kami akan membuat checkpoint pada iterasi 0, menjalankan program hingga iterasi 3, mengembalikan checkpoint, menjalankan beberapa iterasi di sana, dan kembali ke cabang utama:</p>
+<pre><div class="code">
+(gdb) <b>break report</b>     
+Breakpoint 1 at 0x8048453: file test.cpp, line 6.     
+(gdb) <b>run</b>     
+Starting program: /home/bazis/test      
+     
+Breakpoint 1, report (iteration=0) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>checkpoint</b>     
+checkpoint: fork returned pid 2003.     
+(gdb) <b>continue 3</b>     
+Will ignore next 2 crossings of breakpoint 1.  Continuing.     
+Pid 1999, iteration 0     
+Pid 1999, iteration 1     
+Pid 1999, iteration 2     
+     
+Breakpoint 1, report (iteration=3) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>info checkpoints</b>     
+  1 process 2003 at 0x8048453, file test.cpp, line 6     
+* 0 process 1999 (main process) at 0x8048453, file test.cpp, line 6     
+(gdb) <b>restart 0</b>     
+Switching to process 1999     
+#0  report (iteration=3) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>restart 1</b>     
+Switching to process 2003     
+#0  report (iteration=0) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>continue</b>     
+Continuing.     
+Pid 2003, iteration 0     
+     
+Breakpoint 1, report (iteration=1) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>restart 0</b>     
+Switching to process 1999     
+#0  report (iteration=3) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>continue</b>     
+Continuing.     
+Pid 1999, iteration 3     
+     
+Breakpoint 1, report (iteration=4) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>restart 1</b>     
+Switching to process 2003     
+#0  report (iteration=1) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>continue</b>     
+Continuing.     
+Pid 2003, iteration 1     
+     
+Breakpoint 1, report (iteration=2) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+(gdb) <b>continue 7</b>     
+Will ignore next 6 crossings of breakpoint 1.  Continuing.     
+Pid 2003, iteration 2     
+Pid 2003, iteration 3     
+Pid 2003, iteration 4     
+Pid 2003, iteration 5     
+Pid 2003, iteration 6     
+Pid 2003, iteration 7     
+Pid 2003, iteration 8     
+     
+Breakpoint 1, report (iteration=9) at test.cpp:6     
+6               printf("Pid %d, iteration %dgetpid(), iteration);     
+</div></pre>
+<p></p>
+</div></div></div></div>
+</body>
+</html>

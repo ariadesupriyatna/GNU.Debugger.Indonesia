@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah down</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah down</h2>
+                    <p>Mengatur frame tumpukan (stack frame) berikutnya (inner) atau salah satu frame yang mengikutinya.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>down</b><br/>
+                        <b>down</b> [<i>Jumlah frame</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Jumlah frame</dt>
+                        <dd>Jika parameter ini diberikan, perintah <b>down</b> akan turun sebanyak N frame dimana N adalah jumlah yang ditentukan di sini. Jika parameter ini tidak disertakan, perintah <b>down</b> akan turun satu frame.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Gunakan perintah <a href="backtrace.htm"><b>backtrace</b></a> untuk menampilkan semua frame yang tersedia. Gunakan perintah <a href="frame.htm"><b>frame</b></a> untuk memilih frame berdasarkan nomor.</p>
+                    <p>Perhatikan bahwa frame yang saat ini dipilih mempengaruhi output dari perintah <b>info args</b>, <b>info locals</b>, dan <b>info frame</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menjelaskan perintah <b>down</b> menggunakan fungsi rekursif di bawah ini:</p>
+                    <pre><div class="code">
+                        <span class="keyword">#include</span><span class="string">&nbsp;&lt;stdio.h&gt;</span>
+
+                        <span class="keyword">void</span>&nbsp;level0()
+                        {
+                            &nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Reached level 0\n"</span>);
+                        }
+
+                        <span class="keyword">void</span>&nbsp;test(<span class="keyword">int</span>&nbsp;level)
+                        {
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span>&nbsp;(level&nbsp;&gt;&nbsp;0)
+                            &nbsp;&nbsp;&nbsp;&nbsp;{
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span>&nbsp;prevLevel&nbsp;=&nbsp;level&nbsp;-&nbsp;1;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Level %d\n"</span>,&nbsp;level);
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test(prevLevel);
+                            &nbsp;&nbsp;&nbsp;&nbsp;}
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level0();
+                        }
+
+                        <span class="keyword">int</span>&nbsp;main()
+                        {
+                            &nbsp;&nbsp;&nbsp;&nbsp;test(5);
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;0;
+                        }
+                    </div></pre>
+                    <p>Kami akan menetapkan breakpoint pada fungsi <b>level0()</b> dan menggunakan perintah <b>down</b> untuk menavigasi melalui frame-stack dalam trace stack.</p>
+                    <pre><div class="code">
+                        (gdb) <b>b level0</b>
+                        Breakpoint 1 at 0x804841a: file recursion.cpp, line 5.
+                        (gdb) <b>r</b>
+                        Starting program: /home/testuser/recursionDemo
+                        Level 5
+                        Level 4
+                        Level 3
+                        Level 2
+                        Level 1
+
+                        Breakpoint 1, level0 () at recursion.cpp:5
+                        5  printf("Reached level 0\n");
+                        (gdb) <b>backtrace</b>
+                        #0  level0 () at recursion.cpp:5
+                        #1  0x08048462 in test (level=0) at recursion.cpp:17
+                        #2  0x0804845b in test (level=1) at recursion.cpp:14
+                        #3  0x0804845b in test (level=2) at recursion.cpp:14
+                        #4  0x0804845b in test (level=3) at recursion.cpp:14
+                        #5  0x0804845b in test (level=4) at recursion.cpp:14
+                        #6  0x0804845b in test (level=5) at recursion.cpp:14
+                        #7  0x08048479 in main () at recursion.cpp:22
+                        (gdb) <b>down</b>
+                        Bottom (innermost) frame selected; kamu tidak bisa turun lagi.
+                        (gdb) <b>frame 7</b>
+                        #7  0x08048479 in main () at recursion.cpp:22
+                        22  test(5);
+                        (gdb) <b>down</b>
+                        #6  0x0804845b in test (level=5) at recursion.cpp:14
+                        14   test(prevLevel);
+                        (gdb) <b>print prevLevel</b>
+                        $1 = 4
+                        (gdb) <b>down 3</b>
+                        #3  0x0804845b in test (level=2) at recursion.cpp:14
+                        14   test(prevLevel);
+                        (gdb) <b>print prevLevel</b>
+                        $2 = 1
+                        (gdb) <b>down</b>
+                        #2  0x0804845b in test (level=1) at recursion.cpp:14
+                        14   test(prevLevel);
+                        (gdb) <b>down</b>
+                        #1  0x08048462 in test (level=0) at recursion.cpp:17
+                        17   level0();
+                        (gdb) <b>down</b>
+                        #0  level0 () at recursion.cpp:5
+                        5  printf("Reached level 0\n");
+                        (gdb) <b>down</b>
+                        Bottom (innermost) frame selected; kamu tidak bisa turun lagi.
+                    </div></pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

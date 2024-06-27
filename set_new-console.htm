@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set new-console</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set new-console</h2>
+                    <p>Menentukan perangkat terminal yang akan digunakan untuk proses yang sedang didebug.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> new-console <b>off</b><br/>
+                        <b>set</b> new-console <b>on</b><br/>
+                    </div>
+                    <p></p>
+                    <h4>Mode</h4>
+                    <dl>
+                        <dt>off</dt>
+                        <dd>Dalam mode ini, GDB akan memulai program yang sedang didebug di konsolnya sendiri. Output dari program akan dicampur dengan output dari GDB. Ini adalah mode default.</dd>
+                        <dt>on</dt>
+                        <dd>Dalam mode ini, GDB akan memulai program yang sedang didebug di konsol baru. Output dari program akan ditampilkan di jendela terpisah yang akan ditutup setelah program selesai.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Mode Default</h4>
+                    <p>Nilai default untuk pengaturan <b>new-console</b> adalah 'off'.</p>
+                    <p></p>
+                    <h4>Catatan</h4>
+                    <p>Perintah ini hanya didukung di Windows. Perintah serupa di Linux adalah <a href="tty.htm">tty</a>.</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan melakukan debugging program "Hello, World" sederhana:</p>
+                    <pre>
+                        <code>
+(gdb) <b>show new-console</b>
+Pembuatan konsol baru saat membuat proses anak adalah off.
+(gdb) <b>run</b>
+Memulai program: C:\MinGW\bin\0.exe
+[Thread Baru 10252.0x1804]
+Hello, World
+[Inferior 1 (proses 10252) keluar secara normal]
+(gdb) <b>set new-console on</b>
+(gdb) <b>run</b>
+Memulai program: C:\MinGW\bin\0.exe
+[Thread Baru 10224.0x2834]
+[Inferior 1 (proses 10224) keluar secara normal]
+(gdb)
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Setelah kita menjalankan perintah <b>set new-console</b>, instansi berikutnya dari program yang sedang didebug telah dimulai di jendela konsolnya sendiri dan outputnya tidak dicampur dengan output GDB.</p>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

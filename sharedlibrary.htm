@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah sharedlibrary</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah sharedlibrary</h2>
+                    <p>Membuat GDB memuat simbol-simbol debugging untuk perpustakaan bersama yang spesifik atau semua perpustakaan bersama yang dimuat.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>sharedlibrary</b><br/>
+                        <b>sharedlibrary</b> [<i>Nama Perpustakaan</i>]<br/>
+                        <b>sharedlibrary</b> [<i>Ekspresi Reguler</i>]<br/>
+                        <b>share</b> [<i>...</i>]<br/>
+                    </div>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nama Perpustakaan</dt>
+                        <dd>Menentukan perpustakaan untuk dimuat simbol debuggingnya.</dd>
+                        <dt>Ekspresi Reguler</dt>
+                        <dd>Jika ditentukan, GDB akan memuat simbol untuk semua perpustakaan yang saat ini dimuat yang cocok dengan ekspresi yang ditentukan.</dd>
+                    </dl>
+
+                    <h4>Catatan</h4>
+                    <p>Secara normal, GDB akan memuat simbol-simbol perpustakaan bersama secara otomatis. Anda dapat mengontrol perilaku ini menggunakan perintah <b>set auto-solib-add</b>. Namun, dalam beberapa kasus (misalnya saat debugging dengan gdbserver dan simbol-simbol tidak cocok atau menggunakan toolchain Android yang lama), GDB tidak akan memuat simbol-simbol tersebut secara otomatis. Dalam kasus ini, Anda dapat menggunakan perintah <b>info sharedlibrary</b> untuk daftar perpustakaan bersama yang dimuat dan perintah <b>sharedlibrary</b> untuk memaksa simbol-simbolnya dimuat.</p>
+                    <p>Jika GDB tidak memuat simbol debugging secara otomatis untuk perpustakaan Anda saat debugging dengan gdbserver, periksa jalur pencarian menggunakan perintah <b>set solib-search-path</b>.</p>
+
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan menonaktifkan pengisian otomatis perpustakaan bersama menggunakan perintah <b>set auto-solib-add off</b>, kemudian menjalankan aplikasi, mencantumkan file sumber, dan memuat simbol secara manual:</p>
+                    <pre>
+(gdb) <b>set auto-solib-add off</b>     
+(gdb) <b>break main</b>     
+Breakpoint 1 at 0x80484ed: file main.cpp, line 7.     
+(gdb) <b>run</b>     
+Starting program: /home/testuser/libtest/testApp      
+     
+Breakpoint 1, main () at main.cpp:7     
+7     printf("In main()\n");     
+(gdb) <b>info sources</b>     
+Source files for which symbols have been read in:     
+     
+/home/testuser/libtest/main.cpp     
+     
+Source files for which symbols will be read in on demand:     
+     
+     
+(gdb) <b>info sharedlibrary </b>     
+From        To          Syms Read   Shared Object Library     
+0xb7fde820  0xb7ff6b9f  No          /lib/ld-linux.so.2     
+0xb7fd83a0  0xb7fd84c8  No          /home/testuser/libtest/libTest.so     
+0xb7e30f10  0xb7f655cc  No          /lib/i386-linux-gnu/libc.so.6     
+(gdb) <b>sharedlibrary libTest</b>     
+Reading symbols from /home/testuser/libtest/libTest.so...done.     
+Loaded symbols for /home/testuser/libtest/libTest.so     
+(gdb) <b>info sources</b>     
+Source files for which symbols have been read in:     
+     
+/home/testuser/libtest/main.cpp     
+     
+Source files for which symbols will be read in on demand:     
+     
+/home/testuser/libtest/lib.cpp     
+(gdb) <b>break lib.cpp:5</b>     
+Breakpoint 2 at 0xb7fd846e: file lib.cpp, line 5.     
+(gdb) <b>continue</b>     
+Continuing.     
+In main()     
+     
+Breakpoint 2, func () at lib.cpp:5     
+5     printf("In func()\n");     
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

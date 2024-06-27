@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah tty</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah tty</h2>
+<p>Menentukan perangkat terminal yang akan digunakan untuk proses yang sedang dideteksi kesalahannya.</p>
+
+<h4>Sintaks</h4>
+<div class="syntax">
+<b>tty</b> [<i>Perangkat</i>]<br/>
+<b>set</b> inferior-tty [<i>Perangkat</i>]<br/>
+<b>show</b> inferior-tty<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Perangkat</dt>
+<dd>Menentukan jalur lengkap perangkat terminal yang akan dihubungkan oleh GDB ke program yang sedang dideteksi kesalahannya saat Anda meluncurkannya dengan perintah <a href="start.htm"><b>start</b></a> atau <a href="run.htm"><b>run</b></a>.</dd>
+</dl>
+<p></p>
+<h4>Catatan</h4>
+<p>Perintah ini hanya didukung pada sistem Linux. Perintah serupa di Windows adalah <b>set new-console</b>.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Pada contoh ini kita akan mendeteksi kesalahan dari program "Hello, World" sederhana:</p>
+<pre><div class="code">
+(gdb) <b>run</b>     
+Memulai program: /home/testuser/hello      
+Hello, World     
+[Inferior 1 (proses 8442) keluar secara normal]     
+(gdb) <b>tty /dev/pts/11</b>     
+(gdb) <b>show inferior-tty</b>     
+Terminal untuk menjalankan program yang sedang dideteksi kesalahannya adalah "/dev/pts/11".     
+(gdb) <b>run</b>     
+Memulai program: /home/testuser/hello      
+[Inferior 1 (proses 8448) keluar secara normal]     
+</div></pre>
+<p></p>
+<p>Setelah kita menjalankan perintah <b>tty</b>, output dari program "Hello, World" dialihkan ke /dev/pts/11 (nama perangkat didapatkan dengan menjalankan perintah <b>tty</b> di jendela <b>xterm</b> lain).</p>
+<p></p>
+
+
+
+
+
+	
+
+</div></div></div></div>
+</body>
+</html>

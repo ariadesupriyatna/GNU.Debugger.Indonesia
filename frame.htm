@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah frame</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah frame</h2>
+                    <p>Pilih suatu frame stack atau tampilkan frame stack yang sedang dipilih.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>frame</b><br/>
+                        <b>frame</b> [<i>Nomor Frame</i>]<br/>
+                        <b>f</b><br/>
+                        <b>f</b> [<i>Nomor Frame</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nomor Frame</dt>
+                        <dd>Menentukan nomor frame berbasis nol yang akan dipilih sebagai hasil dari menjalankan perintah ini. Jika tidak ada nomor frame yang ditentukan, perintah ini akan menampilkan frame yang saat ini dipilih.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perintah <b>frame</b> menampilkan informasi singkat tentang frame yang dipilih setelah memilihnya. Jika Anda ingin menghindari hal ini, gunakan perintah <a href="select-frame.htm" tppabs="http://visualgdb.com/gdbreference/commands/select-frame"><b>select-frame</b></a> yang merupakan versi diam dari perintah <b>frame</b>.</p>
+                    <p>Perhatikan bahwa frame yang saat ini dipilih mempengaruhi output dari perintah <b>info args</b>, <b>info locals</b> dan <b>info frame</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menjelaskan perintah <b>frame</b> menggunakan fungsi rekursif di bawah ini:</p>
+                    <pre>
+                        <div class="code">
+                            #include <stdio.h>
+                            
+                            void level0()
+                            {
+                                printf("Reached level 0\n");
+                            }
+                            
+                            void test(int level)
+                            {
+                                if (level > 0)
+                                {
+                                    int prevLevel = level - 1;
+                                    printf("Level %d\n", level);
+                                    test(prevLevel);
+                                }
+                                else
+                                    level0();
+                            }
+                            
+                            int main()
+                            {
+                                test(5);
+                                return 0;
+                            }
+                        </div>
+                    </pre>
+                    <p>Kami akan menetapkan breakpoint di fungsi <b>level0()</b> dan menggunakan perintah <b>frame</b> untuk memilih berbagai frame stack dan menampilkan berbagai informasi tentang mereka.</p>
+                    <pre>
+                        <div class="code">
+                            (gdb) <b>b level0</b>
+                            Breakpoint 1 at 0x804841a: file recursion.cpp, line 5.
+                            (gdb) <b>run</b>
+                            Starting program: /home/testuser/recursionDemo
+                            Level 5
+                            Level 4
+                            Level 3
+                            Level 2
+                            Level 1
+                            
+                            Breakpoint 1, level0 () at recursion.cpp:5
+                            5  printf("Reached level 0\n");
+                            (gdb) <b>backtrace</b>
+                            #0  level0 () at recursion.cpp:5
+                            #1  0x08048462 in test (level=0) at recursion.cpp:17
+                            #2  0x0804845b in test (level=1) at recursion.cpp:14
+                            #3  0x0804845b in test (level=2) at recursion.cpp:14
+                            #4  0x0804845b in test (level=3) at recursion.cpp:14
+                            #5  0x0804845b in test (level=4) at recursion.cpp:14
+                            #6  0x0804845b in test (level=5) at recursion.cpp:14
+                            #7  0x08048479 in main () at recursion.cpp:22
+                            (gdb) <b>frame</b>
+                            #0  level0 () at recursion.cpp:5
+                            5  printf("Reached level 0\n");
+                            (gdb) <b>info args</b>
+                            No arguments.
+                            (gdb) <b>frame 1</b>
+                            #1  0x08048462 in test (level=0) at recursion.cpp:17
+                            17   level0();
+                            (gdb) <b>info args</b>
+                            level = 0
+                            (gdb) <b>frame 2</b>
+                            #2  0x0804845b in test (level=1) at recursion.cpp:14
+                            14   test(prevLevel);
+                            (gdb) <b>info args</b>
+                            level = 1
+                        </div>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

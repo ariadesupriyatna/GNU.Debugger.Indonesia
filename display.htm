@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - Perintah display</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah display</h2>
+                    <p>Memungkinkan tampilan otomatis ekspresi tertentu setiap kali GDB berhenti di breakpoint atau setelah langkah demi langkah.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>display</b> [<i>Ekspresi</i>]<br/>
+                        <b>x</b> /[<i>Format</i>] [<i>Ekspresi</i>]<br/>
+                        <b>display</b><br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Ekspresi</dt>
+                        <dd>Menentukan ekspresi yang akan dievaluasi secara otomatis dan ditampilkan setelah setiap langkah. Jalankan perintah <b>display</b> tanpa argumen untuk menampilkan daftar ekspresi yang saat ini diaktifkan untuk tampilan otomatis.</dd>
+                        <dt>Format</dt>
+                        <dd>Jika ditentukan, memungkinkan untuk mengganti format output yang digunakan oleh perintah. Spesifikasi format yang valid antara lain:</dd>
+                    </dl>
+                    <ul>
+                        <li> o - oktal</li>
+                        <li> x - heksadesimal</li>
+                        <li> d - desimal</li>
+                        <li> u - desimal tak bertanda</li>
+                        <li> t - biner</li>
+                        <li> f - floating point</li>
+                        <li> a - alamat</li>
+                        <li> c - karakter</li>
+                        <li> s - string</li>
+                        <li> i - instruksi</li>
+                    </ul>
+                    <p>Dukungan untuk modifier ukuran berikut:</p>
+                    <ul>
+                        <li> b - byte</li>
+                        <li> h - halfword (nilai 16-bit)</li>
+                        <li> w - word (nilai 32-bit)</li>
+                        <li> g - giant word (nilai 64-bit)</li>
+                    </ul>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Untuk menghapus ekspresi dari daftar tampilan otomatis, gunakan perintah <a href="undisplay.htm"><b>undisplay</b></a>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan penggunaan perintah <b>display</b> menggunakan program dasar yang menampilkan argumennya dalam sebuah loop:</p>
+                    <pre><div class="code">
+                        <span class="keyword">#include</span><span class="string">&nbsp;&lt;stdio.h&gt;</span>
+
+                        <span class="keyword">int</span>&nbsp;main(<span class="keyword">int</span>&nbsp;argc,&nbsp;<span class="keyword">char</span>&nbsp;**argv)
+                        {
+                            &nbsp;&nbsp;<span class="keyword">for</span>(<span class="keyword">int</span>&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;argc;&nbsp;i++)
+                            &nbsp;&nbsp;&nbsp;&nbsp;printf(<span class="string">"Arg&nbsp;%d:&nbsp;%s\n"</span>,&nbsp;i,&nbsp;argv[i]);
+                            &nbsp;&nbsp;<span class="keyword">return</span>&nbsp;0;
+                        }
+                    </div></pre>
+                    <p>Kami akan menggunakan perintah <b>display</b> untuk membiarkan GDB menampilkan nilai penghitung loop dan argumen yang ditampilkan saat ini setelah setiap langkah:</p>
+                    <pre><div class="code">
+                        (gdb) <b>set args arg1 arg2 arg3</b>
+                        (gdb) <b>start</b>
+                        Temporary breakpoint 1 at 0x8048426: file test.cpp, line 5.
+                        Starting program: /home/bazis/test arg1 arg2 arg3
+
+                        Temporary breakpoint 1, main (argc=4, argv=0xbffff024) at test.cpp:5
+                        5         for(int i = 0; i &lt; argc; i++)
+                        (gdb) <b>next</b>
+                        6               printf("Arg %d: %si, argv[i]);
+                        (gdb) <b>display/x i</b>
+                        1: /x i = 0x0
+                        (gdb) <b>display argv[i]</b>
+                        2: argv[i] = 0xbffff204 "/home/bazis/test"
+                        (gdb) <b>next</b>
+                        Arg 0: /home/bazis/test
+                        5         for(int i = 0; i &lt; argc; i++)
+                        2: argv[i] = 0xbffff204 "/home/bazis/test"
+                        1: /x i = 0x0
+                        (gdb) <b>next</b>
+                        6               printf("Arg %d: %si, argv[i]);
+                        2: argv[i] = 0xbffff215 "arg1"
+                        1: /x i = 0x1
+                        (gdb) <b>display</b>
+                        2: argv[i] = 0xbffff215 "arg1"
+                        1: /x i = 0x1
+                        (gdb) <b>undisplay 1</b>
+                        (gdb) <b>next</b>
+                        Arg 1: arg1
+                        5         for(int i = 0; i &lt; argc; i++)
+                        2: argv[i] = 0xbffff215 "arg1"
+                        (gdb) <b>next</b>
+                        6               printf("Arg %d: %si, argv[i]);
+                        2: argv[i] = 0xbffff21a "arg2"
+                        (gdb) <b>undisplay</b>
+                        Delete all auto-display expressions? (y or n) y
+                        (gdb) <b>next</b>
+                        Arg 2: arg2
+                        5         for(int i = 0; i &lt; argc; i++)
+                        (gdb) <b>next</b>
+                        6               printf("Arg %d: %si, argv[i]);
+                        (gdb) <b>print i</b>
+                        $1 = 3
+                    </div></pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

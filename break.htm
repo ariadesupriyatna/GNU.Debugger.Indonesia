@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - perintah break</title></head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="main">
+                <h2>perintah break</h2>
+                <p> Membuat breakpoint pada baris, alamat atau fungsi yang ditentukan.</p>
+
+                <h4>Sintaks</h4>
+                <div class="syntax">
+                    <b>break</b><br/>
+                    <b>b</b><br/>
+                    <b>break</b> [<i>Nama Fungsi</i>]<br/>
+                    <b>break</b> [<i>Nama Berkas</i>]:[<i>Nomor Baris</i>]<br/>
+                    <b>break</b> [<i>Nomor Baris</i>]<br/>
+                    <b>break</b> *[<i>Alamat</i>]<br/>
+                    <b>break</b> [<i>...</i>] if [<i>Kondisi</i>]<br/>
+                    <b>break</b> [<i>...</i>] thread [<i>Thread-id</i>]<br/>
+                    <b>b</b> [<i>...</i>]<br/>
+                </div>
+                <p></p>
+                <h4>Parameter</h4>
+                <dl>
+                    <dt>Nama Fungsi</dt>
+                    <dd>Jika ditentukan, perintah <b>break</b> akan menetapkan breakpoint di awal fungsi yang ditentukan.</dd>
+                    <dt>Nama Berkas</dt>
+                    <dd>Jika ditentukan bersama dengan nomor baris, perintah <b>break</b> akan menetapkan breakpoint pada baris yang diberikan di dalam berkas. Jika baris yang ditentukan tidak mengandung kode yang dapat dieksekusi, breakpoint akan ditetapkan pada baris pertama di bawahnya yang memiliki kode yang dapat dieksekusi.</dd>
+                    <dt>Nomor Baris</dt>
+                    <dd>Jika ditentukan, perintah <b>break</b> akan menetapkan breakpoint pada lokasi yang diberikan di dalam berkas yang ditentukan. Jika tidak ada berkas yang ditentukan, berkas sumber saat ini akan digunakan.</dd>
+                    <dt>Alamat</dt>
+                    <dd>Jika ditentukan, perintah <b>break</b> akan menetapkan breakpoint pada alamat yang diberikan. Alamat tersebut harus berupa ekspresi C/C++ yang valid (misalnya angka heksadesimal yang dimulai dengan 0x).</dd>
+                    <dt>Kondisi</dt>
+                    <dd>Menentukan ekspresi C/C++ opsional yang akan dievaluasi setiap kali breakpoint terkena. Jika hasil evaluasi adalah 0, breakpoint akan dilewati.</dd>
+                    <dt>Thread-Id</dt>
+                    <dd>Menentukan ID thread tingkat GDB opsional yang akan dikaitkan dengan breakpoint ini. Jika diberikan, breakpoint hanya akan dipicu dalam thread yang diberikan. Jika tidak diberikan, breakpoint akan dipicu ketika thread mana pun mencapai lokasi yang ditentukan.</dd>
+                </dl>
+                <p></p>
+                <h4>Perhatian</h4>
+                <p>Jangan bingung antara bentuk <i>[Nama Fungsi]</i> dan <i>[Alamat]</i> dari perintah <b>break</b>. Misalnya, jika Anda mencoba menetapkan breakpoint pada alamat 0x40138c, perintah berikut akan gagal:</p>
+                <pre>
+(gdb)break 0x40138c     
+                </pre>
+                <p></p>
+                <p>Ini terjadi karena GDB akan menginterpretasikan <b>0x40138c</b> sebagai nama fungsi daripada alamat. Sintaks yang benar untuk menetapkan breakpoint pada alamat 0x40138c adalah:</p>
+                <pre>
+(gdb)break *0x40138c     
+                </pre>
+                <p></p>
+                <h4>Breakpoint Tertunda</h4>
+                <p>Jika Anda mencoba menetapkan breakpoint dalam kode di dalam pustaka bersama (DLL) yang belum dimuat, GDB akan menampilkan peringatan berikut:</p>
+                <pre>
+Make breakpoint pending on future shared library load? (y or [n])     
+                </pre>
+                <p></p>
+                <p>Dalam kebanyakan kasus menjawab 'y' akan membuat breakpoint tertunda yang akan diselesaikan ketika pustaka bersama (DLL) yang bersangkutan dimuat di masa mendatang. Namun, ini mungkin tidak berhasil dalam salah satu kasus berikut:</p>
+                <ul>
+                    <li> Pustaka bersama tidak mengandung simbol debugging (misalnya simbol telah dihapus dengan perintah 'strip').</li>
+                    <li> GDB tidak dapat mendeteksi saat pustaka dimuat (misalnya saat menggunakan gdb 6.x di Android)</li>
+                    <li> Anda telah membuat kesalahan dalam nama berkas atau nama fungsi. Perhatikan bahwa nama berkas di Linux bersifat case-sensitive.</li>
+                </ul>
+                <p>Jika Anda mengalami masalah breakpoint, perintah berikut mungkin berguna untuk diagnosa lebih lanjut:</p>
+                <ul>
+                    <li> <b>info sharedlibrary</b> memberikan informasi tentang pustaka bersama (DLL) yang saat ini dimuat.</li>
+                    <li> <b>info sources</b> memberikan informasi tentang berkas sumber yang dikenali oleh GDB.</li>
+                    <li> <b>info breakpoints</b> memberikan informasi terperinci tentang breakpoint yang dibuat dan statusnya.</li>
+                </ul>
+                <p></p>
+                <h4>Contoh</h4>
+                <h5>Menentukan lokasi</h5>
+                <p>Dalam contoh ini kita akan menetapkan breakpoint di awal fungsi <b>main()</b> menggunakan 4 variasi sintaks yang berbeda:</p>
+                <p><b>Menggunakan nama fungsi:</b></p>
+                <pre>
+(gdb) <b>b main</b>     
+Breakpoint 1 at 0x401395: file 0.cpp, line 4.     
+(gdb)     
+                </pre>
+                <p><b>Menggunakan alamat fungsi:</b></p>
+                <pre>
+(gdb) <b>info address main</b>     
+Symbol "main(int, char**)" is a function at address 0x40138c.     
+(gdb) <b>break *0x40138c</b>     
+Breakpoint 2 at 0x40138c: file 0.cpp, line 4.     
+(gdb)     
+                </pre>
+                <p><b>Menggunakan nama berkas dan nomor baris:</b></p>
+                <pre>
+(gdb) <b>info line main</b>     
+Line 4 of "0.cpp" starts at address 0x40138c <main(int, char**)>     
+   and ends at 0x401395 <main(int, char**)+9>.     
+(gdb) <b>break 0.cpp:4</b>     
+Breakpoint 3 at 0x401395: file 0.cpp, line 4.     
+                </pre>
+                <p><b>Menggunakan nomor baris saja:</b></p>
+                <pre>
+(gdb) <b>info source</b>     
+Current source file is 0.cpp     
+Compilation directory is C:\MinGW\bin     
+Located in c:\mingw\bin\0.cpp     
+Source language is c++.     
+Compiled with DWARF 2 debugging format.     
+Does not include preprocessor macro info.     
+(gdb) <b>break 4</b>     
+Breakpoint 4 at 0x40138c: file 0.cpp, line 4.     
+                </pre>
+                <h5>Breakpoint Kondisional</h5>
+                <p>Dalam contoh ini kita akan menetapkan breakpoint kondisional dalam program berikut:</p>
+                <pre>
+#include &lt;stdio.h&gt;
+
+void func(int arg)
+{
+    printf("Iterasi %d\n", arg);
+}
+
+int main(int argc, char *argv[])
+{
+    for(int i = 0; i < 5; i++)
+        func(i);
+    return 0;
+}     
+                </pre>
+                <p>Breakpoint akan ditetapkan di dalam fungsi <b>func()</b> dan hanya akan dipicu ketika arg sama dengan 3:</p>
+                <pre>
+(gdb) <b>break func if arg == 3</b>     
+Breakpoint 1 at 0x4013b6: file 0.cpp, line 5.     
+(gdb) <b>run</b>     
+Starting program: C:\MinGW\bin\0.exe     
+[New Thread 7860.0x25c0]     
+Iterasi 0     
+Iterasi 1     
+Iterasi 2
+
+Breakpoint 1, func (arg=3) at 0.cpp:5     
+5               printf("Iterasi %d\n", arg);     
+                </pre>
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

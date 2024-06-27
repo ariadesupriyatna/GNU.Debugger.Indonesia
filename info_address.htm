@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah info address</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah info address</h2>
+                    <p>Menampilkan alamat dari simbol yang diberikan</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>info</b> address [<i>Nama Simbol</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nama Simbol</dt>
+                        <dd>Menentukan simbol (fungsi atau variabel) yang alamatnya akan ditampilkan.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perintah <b>info address <Nama Simbol></b> menghasilkan output yang mirip dengan perintah <b>print &<Nama Simbol></b>. Namun, berbeda dengan perintah <a href="print.htm"><b>print</b></a>, perintah ini tidak menampilkan informasi tipe tetapi mencetak apakah simbol tersebut adalah fungsi atau variabel.</p>
+                    <p>Catatan bahwa program tidak perlu berjalan untuk menggunakan perintah <b>info address</b>.</p>
+                    <p>Untuk melakukan operasi sebaliknya (mendapatkan nama simbol dari alamat), gunakan perintah <b>info symbol</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan menunjukkan penggunaan perintah <b>info address</b> menggunakan program C++ sederhana yang terdiri dari fungsi <b>main()</b> dan variabel global. Kami akan menampilkan output dari perintah <b>info address</b> dan output dari perintah <b>print</b> yang setara:</p>
+                    <pre>
+                        <div class="code">
+(gdb) <b>info address main</b>     
+Simbol "main(int, char**)" adalah sebuah fungsi pada alamat 0x804841d.     
+(gdb) <b>info address g_GlobalVar </b>     
+Simbol "g_GlobalVar" adalah penyimpanan statis pada alamat 0x804a020.     
+(gdb) <b>print &main</b>     
+$1 = (int (*)(int, char **)) 0x804841d &lt;main(int, char**)&gt;     
+(gdb) <b>print &g_GlobalVar</b>     
+$2 = (int *) 0x804a020 &lt;g_GlobalVar&gt;     
+                        </div>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

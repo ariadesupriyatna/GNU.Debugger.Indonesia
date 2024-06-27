@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><title>Referensi Perintah GDB - Perintah disable</title></head>
+
+<body><div class="container-fluid"><div class="row"><div class="col-xs-12"><div class="main">
+<h2>Perintah disable</h2>
+<p> Menonaktifkan semua breakpoint atau breakpoint yang ditentukan.</p>
+
+<h4>Syntax</h4>
+<div class="syntax">
+<b>disable</b><br/>
+<b>disable</b> [<i>Number</i>]<br/>
+<b>disable</b> [<i>Number1</i>] [<i>Number2</i>] ... [<i>NumberN</i>]<br/>
+<b>disable</b> <b>breakpoints</b> ...<br/>
+</div>
+<p></p>
+<h4>Parameter</h4>
+<dl>
+<dt>Number</dt>
+<dd>Ketika <b>disable</b> dipanggil tanpa argumen, semua breakpoint akan dinonaktifkan. Ketika satu atau lebih nomor ditentukan, hanya breakpoint yang cocok dengan nomor yang ditentukan yang akan dinonaktifkan.</dd>
+</dl>
+<p></p>
+<h4>Catatan</h4>
+<p>Gunakan perintah <a href="enable.htm" tppabs="http://visualgdb.com/gdbreference/commands/enable"><b>enable</b></a> untuk mengaktifkan breakpoint, perintah <a href="delete.htm" tppabs="http://visualgdb.com/gdbreference/commands/delete"><b>delete</b></a> untuk menghapusnya, atau perintah <b>info breakpoints</b> untuk menampilkan informasi tentang breakpoint.</p>
+<p></p>
+<h4>Contoh</h4>
+<p>Pada contoh ini, kita akan menetapkan breakpoint di dalam loop dan kemudian menonaktifkannya setelah breakpoint tersebut terpanggil.</p>
+<pre><div class="code">
+(gdb) <b>break 6</b>     
+Breakpoint 1 at 0x80483f7: file test.cpp, line 6.     
+(gdb) <b>run</b>     
+Starting program: /home/testuser/test      
+Breakpoint 1, main () at test.cpp:6     
+6         printf("%di);     
+(gdb) <b>disable 1</b>     
+(gdb) <b>info breakpoints</b>     
+Num     Type           Disp Enb Address    What     
+1       breakpoint     keep n   0x080483f7 in main() at test.cpp:6     
+ breakpoint already hit 1 time     
+(gdb) <b>continue</b>     
+Continuing.     
+0     
+1     
+2     
+3     
+4     
+[Inferior 1 (process 26540) exited normally]     
+</div></pre>
+<p></p>
+</div></div></div></div>
+</body>
+</html>

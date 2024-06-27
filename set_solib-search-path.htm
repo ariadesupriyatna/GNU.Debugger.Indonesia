@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - set solib-search-path</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>Perintah set solib-search-path</h2>
+                    <p>Menentukan direktori-direktori tempat GDB akan mencari shared libraries dengan simbol-simbolnya. Opsi ini berguna saat debugging dengan gdbserver.</p>
+
+                    <h4>Sintaksis</h4>
+                    <div class="syntax">
+                        <b>set</b> solib-search-path [<i>Direktori-direktori</i>]<br/>
+                        <b>show</b> solib-search-path<br/>
+                    </div>
+                    <p></p>
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Direktori-direktori</dt>
+                        <dd>Menentukan daftar direktori yang dipisahkan oleh titik dua (:) di Linux atau titik koma (;) di Windows tempat GDB akan mencari shared libraries saat mencari simbol-simbolnya.</dd>
+                    </dl>
+                    <p></p>
+                    <h4>Penggunaan umum</h4>
+                    <p>Perintah ini berguna saat debugging program remote via gdbserver. Jika jalur shared library di komputer remote dan komputer GDB berbeda, GDB tidak akan secara otomatis menemukan salinan lokal dari library tersebut dan memuat simbol-simbolnya kecuali direktori yang berisikan library tersebut di spesifikasikan di <b>set solib-search-path</b>.</p>
+                    <p>Contoh, jika Anda telah menyalin /home/testuser/libtest/libTest.so di komputer dengan GDB ke /tmp/libTest.so di komputer dengan GDBServer, Anda perlu menentukan <b>set solib-search-path /home/testuser/libtest</b> agar simbol-simbol dapat dimuat.</p>
+                    <p></p>
+                    <h4>Nilai Default</h4>
+                    <p>Nilai default untuk variabel <b>solib-search-path</b> adalah "." yang sesuai dengan direktori kerja GDB (direktori tempat GDB diluncurkan kecuali diubah menggunakan perintah <b>cd</b>).</p>
+                    <p></p>
+                    <h4>Contoh</h4>
+                    <p>Pada contoh ini, kita akan melakukan debugging sebuah shared library sederhana dengan gdbserver:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int func()
+{
+    printf("Di dalam func()\n");
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Kita akan menggunakan program sederhana untuk menguji library kita:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+int func();
+
+int main()
+{
+    printf("Di dalam main()\n");
+    func();
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Pertama, kita membangun aplikasi dan library serta mendeploynya ke mesin lain:</p>
+                    <pre>
+                        <code>
+cd /home/testuser/libtest
+g++ -ggdb -fPIC -shared lib.cpp -o libTest.so
+g++ -ggdb main.cpp libTest.so -o testApp -Wl,--rpath='$ORIGIN'
+scp testApp libTest.so deploy_machine:/tmp
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Lalu kita jalankan gdbserver di mesin <b>deploy_machine</b>:</p>
+                    <pre>
+                        <code>
+cd /tmp
+gdbserver :2000 testApp
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Terakhir, kita jalankan GDB dari direktori lain (jika tidak, GDB masih akan menemukan libTest.so):</p>
+                    <pre>
+                        <code>
+cd /
+gdb /home/testuser/libtest/testApp
+                        </code>
+                    </pre>
+                    <p></p>
+                    <p>Sekarang kita akan mencoba untuk menetapkan breakpoint di dalam libTest.so (yang akan gagal karena /tmp/libTest.so tidak dimuat secara awal). Perhatikan bagaimana menentukan <b>set solib-search-path</b> memungkinkan GDB untuk memuat simbol-simbol dan menetapkan breakpoint:</p>
+                    <pre>
+                        <code>
+(gdb) <b>target remote deploy_machine:2000</b>
+Remote debugging using deploy_machine:2000
+Reading symbols from /lib/ld-linux.so.2...
+Reading symbols from /usr/lib/debug/lib/i386-linux-gnu/ld-2.15.so...done.
+done.
+Loaded symbols for /lib/ld-linux.so.2
+(gdb) <b>break main</b>
+Breakpoint 1 at 0x80484ed: file main.cpp, line 7.
+(gdb) <b>continue</b>
+Continuing.
+Breakpoint 1, main () at main.cpp:7
+7     printf("Di dalam main()\n");
+(gdb) <b>break func</b>
+Function "func" not defined.
+Make breakpoint pending on future shared library load? (y or [n]) n
+(gdb) <b>info sharedlibrary</b>
+warning: Could not load shared library symbols for /tmp/libTest.so.
+Do you need "set solib-search-path" or "set sysroot"?
+From        To          Syms Read   Shared Object Library
+0x0019b820  0x001b3b9f  Yes         /lib/ld-linux.so.2
+                        No          /tmp/libTest.so
+0x004bcf10  0x005f15cc  No          /lib/i386-linux-gnu/libc.so.6
+(gdb) <b>set solib-search-path /home/testuser/libtest</b>
+Reading symbols from /home/testuser/libtest/libTest.so...done.
+Loaded symbols for /home/testuser/libtest/libTest.so
+Reading symbols from /lib/i386-linux-gnu/libc.so.6...
+Reading symbols from /usr/lib/debug/lib/i386-linux-gnu/libc-2.15.so...done.
+done.
+Loaded symbols for /lib/i386-linux-gnu/libc.so.6
+(gdb) <b>info sharedlibrary</b>
+From        To          Syms Read   Shared Object Library
+0x0019b820  0x001b3b9f  Yes         /lib/ld-linux.so.2
+0x00f893a0  0x00f894c8  Yes         /home/testuser/libtest/libTest.so
+0x004bcf10  0x005f15cc  Yes         /lib/i386-linux-gnu/libc.so.6
+(gdb) <b>break func</b>
+Breakpoint 2 at 0xf8946e: file lib.cpp, line 5.
+(gdb) <b>continue</b>
+Continuing.
+
+Breakpoint 2, func () at lib.cpp:5
+5     printf("Di dalam func()\n");
+(gdb) <b>backtrace</b>
+#0  func () at lib.cpp:5
+#1  0x080484fe in main () at main.cpp:8
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

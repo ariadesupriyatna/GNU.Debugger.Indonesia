@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Referensi Perintah GDB - perintah select-frame</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main">
+                    <h2>perintah select-frame</h2>
+                    <p> Memilih bingkai (frame) stack secara diam-diam.</p>
+
+                    <h4>Sintaks</h4>
+                    <div class="syntax">
+                        <b>select-frame</b> [<i>Nomor Frame</i>]<br/>
+                    </div>
+                    <p></p>
+
+                    <h4>Parameter</h4>
+                    <dl>
+                        <dt>Nomor Frame</dt>
+                        <dd>Menentukan nomor frame berbasis nol yang akan dipilih sebagai hasil dari menjalankan perintah ini.</dd>
+                    </dl>
+                    <p></p>
+
+                    <h4>Catatan</h4>
+                    <p>Perintah ini mengubah frame yang dipilih tanpa menampilkan informasi tambahan apapun. Jika Anda ingin menampilkan nomor frame yang sedang dipilih saat ini, gunakan perintah <a href="frame.htm" tppabs="http://visualgdb.com/gdbreference/commands/frame"><b>frame</b></a>.</p>
+                    <p>Perhatikan bahwa frame yang dipilih saat ini memengaruhi output dari perintah <b>info args</b>, <b>info locals</b>, dan <b>info frame</b>.</p>
+                    <p></p>
+
+                    <h4>Contoh</h4>
+                    <p>Kami akan mengilustrasikan perintah <b>select-frame</b> menggunakan fungsi rekursif di bawah ini:</p>
+                    <pre>
+                        <code>
+#include <stdio.h>
+
+void level0()
+{
+    printf("Mencapai level 0\n");
+}
+
+void test(int level)
+{
+    if (level > 0)
+    {
+        int prevLevel = level - 1;
+        printf("Level %d\n", level);
+        test(prevLevel);
+    }
+    else
+        level0();
+}
+
+int main()
+{
+    test(5);
+    return 0;
+}
+                        </code>
+                    </pre>
+                    <p>Kami akan menetapkan breakpoint pada fungsi <b>level0()</b> dan menggunakan perintah <b>select-frame</b> untuk memilih stack frame yang berbeda secara diam-diam. Perhatikan bahwa berbeda dengan perintah <a href="frame.htm" tppabs="http://visualgdb.com/gdbreference/commands/frame"><b>frame</b></a>, perintah <b>select-frame</b> tidak menghasilkan output:</p>
+                    <pre>
+                        <code>
+(gdb) <b>b level0</b>
+Breakpoint 1 at 0x804841a: file recursion.cpp, line 5.
+(gdb) <b>run</b>
+Starting program: /home/testuser/recursionDemo
+Level 5
+Level 4
+Level 3
+Level 2
+Level 1
+
+Breakpoint 1, level0 () at recursion.cpp:5
+5  printf("Mencapai level 0\n");
+(gdb) <b>info locals</b>
+No locals.
+(gdb) <b>select-frame 1</b>
+(gdb) <b>info locals</b>
+No locals.
+(gdb) <b>select-frame 2</b>
+(gdb) <b>info locals</b>
+prevLevel = 0
+(gdb) <b>select-frame 3</b>
+(gdb) <b>info locals</b>
+prevLevel = 1
+(gdb) <b>select-frame 4</b>
+(gdb) <b>info locals</b>
+prevLevel = 2
+(gdb) <b>frame</b>
+#4  0x0804845b in test (level=3) at recursion.cpp:14
+14   test(prevLevel);
+                        </code>
+                    </pre>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
