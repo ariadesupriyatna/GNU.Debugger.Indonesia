@@ -1,2 +1,2 @@
 # GNU.Debugger.Indonesia
-jika limit bandwidth sudah habis, kalian bisa clone saja repo ini
+[website tutorialnya, klik disini](https://ariadesupriyatna.github.io/GNU.Debugger.Indonesia/)
